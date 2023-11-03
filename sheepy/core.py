@@ -5,12 +5,30 @@ import logging
 import os
 import sys
 
+import ezsheets
 import requests
 
+TEST = True
 URL = "http://www.omdbapi.com/?apikey="
-_API_KEY = os.environ["OMDB_API_KEY"]
-SPREADSHEET_ID = os.environ["SPREADSHEET_ID"]
+API_KEY = os.environ["OMDB_API_KEY"]
+SPREADSHEET_ID = (
+    os.environ["SPREADSHEET_ID"] if not TEST else os.environ["SPREADSHEET_ID_TEST"]
+)
 LOG_FORMAT = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
+
+COLUMNS = [
+    "Watched?",
+    "Title",
+    "Year",
+    "Genre",
+    "Runtime",
+    "Suggested by",
+    "IMDb Score",
+    "Rotten Tomatoes Score",
+    "Director",
+    "Plot",
+    "Movie Poster",
+]
 
 if not os.path.exists("logs/tmp.log"):
     os.mkdir("logs")
@@ -18,7 +36,7 @@ if not os.path.exists("logs/tmp.log"):
 
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format=LOG_FORMAT,
     handlers=[
         logging.FileHandler(filename="logs/tmp.log"),
@@ -78,22 +96,24 @@ def get_movie_data(imdb_id: str) -> dict:
         ValueError: If no response is received from the API.
     """
     try:
-        response = requests.get(URL + _API_KEY + "&i=" + imdb_id)
+        response = requests.get(URL + API_KEY + "&i=" + imdb_id)
         response.raise_for_status()
     except requests.exceptions.HTTPError as he:
-        logger.error(he)
-        raise SystemExit(he)
+        logger.error("HTTP Error Code: " + response.status_code + " - " + he)
+        raise SystemExit("HTTP Error Code: " + response.status_code + " - " + he)
     except requests.exceptions.RequestException as re:
-        logger.error(re)
-        raise SystemExit(re)
+        logger.error("Request Error: " + re)
+        raise SystemExit("Request Error: " + re)
     except Exception as e:
-        logger.error(e)
-        raise SystemExit(e)
+        logger.error("General Error: " + e)
+        raise SystemExit("General Error: " + e)
     response = response.json()
     if response["Response"] == "False":
         logger.error(response["Error"] + " Invalid IMDb ID. Please try again.")
         logger.debug("Used ID: " + imdb_id)
         raise SystemExit(response["Error"] + " Invalid IMDb ID. Please try again.")
+    logger.info("Successfully retrieved movie data for " + response["Title"] + ".")
+    logger.debug(type(response))
     return response
 
 
@@ -109,5 +129,47 @@ def _get_api_key() -> str:
     return os.environ["OMDB_API_KEY"]
 
 
+def _get_spreadsheet_id() -> str:
+    """Get the spreadsheet ID for the Google Sheet.
+
+    This function retrieves the spreadsheet ID for the
+      Google Sheet from the environment variables.
+
+    Returns:
+        str: The spreadsheet ID for the Google Sheet.
+    """
+    return os.environ["SPREADSHEET_ID"]
+
+
+def setup_new_sheet(sh_id: str = SPREADSHEET_ID) -> str:
+    """Setup a new Google Sheet for the user.
+
+    This function creates a new Google Sheet for the user to use.
+    """
+    try:
+        ss = ezsheets.createSpreadsheet(title="Sheepy Spreadsheet")
+        sh = ss.createSheet(title="Sheepy", rowCount=1000, columnCount=len(COLUMNS))
+        sh.updateRow(1, COLUMNS)
+        logger.info(
+            "Successfully created spreadsheet: " + ss.title + " with ID: " + ss.id
+        )
+        logger.info(
+            "Successfully created sheet: "
+            + sh.title
+            + " with "
+            + str(sh.rowCount)
+            + " rows and "
+            + str(sh.columnCount)
+            + " columns."
+        )
+    except ezsheets.EZSheetsException as eze:
+        logger.error("Error creating spreadsheet: " + eze)
+        raise SystemExit("Error creating spreadsheet: " + eze)
+    return ss.id
+
+
 if __name__ == "__main__":
-    logger.info(get_movie_data("tt0133093"))
+    print("This is the core module.")
+    # logger.info(get_movie_data("tt0133093"))
+    # s = ezsheets.Spreadsheet(SPREADSHEET_ID)
+    # setup_new_sheet()
