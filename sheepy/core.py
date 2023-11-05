@@ -8,13 +8,29 @@ import sys
 import ezsheets
 import requests
 
-TEST = True
+LOG_FORMAT = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format=LOG_FORMAT,
+    handlers=[
+        logging.FileHandler(filename="logs/tmp.log"),
+        logging.StreamHandler(stream=sys.stdout),
+    ],
+)
+
+logger = logging.getLogger("sheepy")
+
+
 URL = "http://www.omdbapi.com/?apikey="
 API_KEY = os.environ["OMDB_API_KEY"]
+TEST = True if os.environ["TEST"] == "True" else False
 SPREADSHEET_ID = (
-    os.environ["SPREADSHEET_ID"] if not TEST else os.environ["SPREADSHEET_ID_TEST"]
+    os.environ.get("SPREADSHEET_ID", "")
+    if not TEST
+    else os.environ.get("SPREADSHEET_ID_TEST", "")
 )
-LOG_FORMAT = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
+
 
 COLUMNS = [
     "Watched?",
@@ -33,18 +49,6 @@ COLUMNS = [
 if not os.path.exists("logs/tmp.log"):
     os.mkdir("logs")
     open("logs/tmp.log", "w").close()
-
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format=LOG_FORMAT,
-    handlers=[
-        logging.FileHandler(filename="logs/tmp.log"),
-        logging.StreamHandler(stream=sys.stdout),
-    ],
-)
-
-logger = logging.getLogger("sheepy")
 
 
 def read_user_cli_args() -> argparse.Namespace:
@@ -99,21 +103,22 @@ def get_movie_data(imdb_id: str) -> dict:
         response = requests.get(URL + API_KEY + "&i=" + imdb_id)
         response.raise_for_status()
     except requests.exceptions.HTTPError as he:
-        logger.error("HTTP Error Code: " + response.status_code + " - " + he)
-        raise SystemExit("HTTP Error Code: " + response.status_code + " - " + he)
+        logger.error("HTTP Error Code: - " + str(he))
+        raise SystemExit("HTTP Error Code: - " + str(he))
     except requests.exceptions.RequestException as re:
-        logger.error("Request Error: " + re)
-        raise SystemExit("Request Error: " + re)
+        logger.error("Request Error: " + str(re))
+        raise SystemExit("Request Error: " + str(re))
     except Exception as e:
-        logger.error("General Error: " + e)
-        raise SystemExit("General Error: " + e)
+        logger.error("General Error: " + str(e))
+        raise SystemExit("General Error: " + str(e))
+
     response = response.json()
     if response["Response"] == "False":
         logger.error(response["Error"] + " Invalid IMDb ID. Please try again.")
         logger.debug("Used ID: " + imdb_id)
         raise SystemExit(response["Error"] + " Invalid IMDb ID. Please try again.")
+
     logger.info("Successfully retrieved movie data for " + response["Title"] + ".")
-    logger.debug(type(response))
     return response
 
 
@@ -147,7 +152,12 @@ def setup_new_sheet(sh_id: str = SPREADSHEET_ID) -> str:
     This function creates a new Google Sheet for the user to use.
     """
     try:
-        ss = ezsheets.createSpreadsheet(title="Sheepy Spreadsheet")
+        ss = (
+            ezsheets.createSpreadsheet(title="Sheepy Spreadsheet")
+            if sh_id == ""
+            else ezsheets.Spreadsheet(sh_id)
+        )
+
         sh = ss.createSheet(title="Sheepy", rowCount=1000, columnCount=len(COLUMNS))
         sh.updateRow(1, COLUMNS)
         logger.info(
@@ -165,11 +175,29 @@ def setup_new_sheet(sh_id: str = SPREADSHEET_ID) -> str:
     except ezsheets.EZSheetsException as eze:
         logger.error("Error creating spreadsheet: " + eze)
         raise SystemExit("Error creating spreadsheet: " + eze)
-    return ss.id
+    return (ss, sh)
+
+
+def find_free_row(sheet: ezsheets.Sheet) -> int:
+    """Find the first free row in the spreadsheet.
+
+    This function finds the first free row in the spreadsheet
+      and returns it.
+
+    Args:
+        sheet (ezsheets.Sheet): The sheet to search for the first free row.
+
+    Returns:
+        int: The first free row in the spreadsheet.
+    """
+    for i in range(1, sheet.rowCount):
+        if sheet.get(1, i) == [""]:
+            return i
+    return sheet.rowCount + 1
 
 
 if __name__ == "__main__":
     print("This is the core module.")
-    # logger.info(get_movie_data("tt0133093"))
+    logger.info(get_movie_data("tt0133093"))
     # s = ezsheets.Spreadsheet(SPREADSHEET_ID)
     # setup_new_sheet()

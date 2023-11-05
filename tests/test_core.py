@@ -1,13 +1,15 @@
 # Desc: Unit tests for core.py
 # flake8: noqa
 from unittest.mock import patch
+
+import ezsheets
 import pytest
 import requests
 
-from sheepy.core import get_movie_data
+from sheepy.core import find_free_row, get_movie_data
 
 
-@patch('sheepy.core.requests.get')
+@patch("sheepy.core.requests.get")
 def test_get_movie_data_success(mock_get):
     mock_get.return_value.status_code = 200
     mock_get.return_value.json.return_value = {
@@ -19,11 +21,10 @@ def test_get_movie_data_success(mock_get):
         "Genre": "Action, Sci-Fi",
         "Director": "Lana Wachowski, Lilly Wachowski",
         "Writer": "Lilly Wachowski, Lana Wachowski",
-        "Actors": "Keanu Reeves, Laurence Fishburne, "
-                  "Carrie-Anne Moss, Hugo Weaving",
+        "Actors": "Keanu Reeves, Laurence Fishburne, " "Carrie-Anne Moss, Hugo Weaving",
         "Plot": "A computer hacker learns from mysterious "
-                "rebels about the true nature of his reality "
-                "and his role in the war against its controllers.",
+        "rebels about the true nature of his reality "
+        "and his role in the war against its controllers.",
         "Language": "English",
         "Country": "USA",
         "Awards": "Won 4 Oscars. Another 37 wins & 51 nominations.",
@@ -53,15 +54,22 @@ def test_get_movie_data_success(mock_get):
     assert result["Genre"] == "Action, Sci-Fi"
     assert result["Director"] == "Lana Wachowski, Lilly Wachowski"
     assert result["Writer"] == "Lilly Wachowski, Lana Wachowski"
-    assert result["Actors"] == "Keanu Reeves, Laurence Fishburne, " \
-                                "Carrie-Anne Moss, Hugo Weaving"
-    assert result["Plot"] == "A computer hacker learns from mysterious " \
-                             "rebels about the true nature of his reality " \
-                             "and his role in the war against its controllers."
+    assert (
+        result["Actors"] == "Keanu Reeves, Laurence Fishburne, "
+        "Carrie-Anne Moss, Hugo Weaving"
+    )
+    assert (
+        result["Plot"] == "A computer hacker learns from mysterious "
+        "rebels about the true nature of his reality "
+        "and his role in the war against its controllers."
+    )
     assert result["Language"] == "English"
     assert result["Country"] == "USA"
     assert result["Awards"] == "Won 4 Oscars. Another 37 wins & 51 nominations."
-    assert result["Poster"] == "https://m.media-amazon.com/images/M/MV5BMjAxMjg5ODI4N15BMl5BanBnXkFtZTYwNjM5Mzg5._V1_SX300.jpg"
+    assert (
+        result["Poster"]
+        == "https://m.media-amazon.com/images/M/MV5BMjAxMjg5ODI4N15BMl5BanBnXkFtZTYwNjM5Mzg5._V1_SX300.jpg"
+    )
     assert result["Ratings"] == [
         {"Source": "Internet Movie Database", "Value": "8.7/10"},
         {"Source": "Rotten Tomatoes", "Value": "88%"},
@@ -79,22 +87,44 @@ def test_get_movie_data_success(mock_get):
     assert result["Response"] == "True"
 
 
-@patch('sheepy.core.requests.get')
+@patch("sheepy.core.requests.get")
 def test_get_movie_data_http_error(mock_get):
     mock_get.side_effect = requests.exceptions.HTTPError()
     with pytest.raises(SystemExit):
         get_movie_data("tt0133093")
 
 
-@patch('sheepy.core.requests.get')
+@patch("sheepy.core.requests.get")
 def test_get_movie_data_request_exception(mock_get):
     mock_get.side_effect = requests.exceptions.RequestException()
     with pytest.raises(SystemExit):
         get_movie_data("tt0133093")
 
 
-# @patch('sheepy.core.requests.get')
-# def test_get_movie_data_no_response(mock_get):
-#     mock_get.return_value = None
-#     with pytest.raises(SystemExit):
-#         get_movie_data("tt0133093")
+@patch('sheepy.core.requests.get')
+def test_get_movie_data_no_response(mock_get):
+    mock_get.return_value = None
+    with pytest.raises(SystemExit):
+        get_movie_data("tt0133093")
+
+#  def test_find_free_row():
+#      # Create a new spreadsheet and get its first sheet
+#      ss = ezsheets.createSpreadsheet()
+#      sheet = ss[0]
+#  
+#      # Test when the sheet is empty
+#      assert find_free_row(sheet) == 1
+#  
+#      # Test when the sheet has some data
+#      sheet.updateRow(1, ["Name", "Age", "Gender"])
+#      sheet.updateRow(2, ["Alice", "25", "Female"])
+#      sheet.updateRow(3, ["Bob", "30", "Male"])
+#      assert find_free_row(sheet) == 4
+#  
+#      # Test when the sheet is full
+#      for i in range(4, sheet.rowCount + 1):
+#          sheet.updateRow(i, ["aaa", "aaa", "aaa"])
+#      assert find_free_row(sheet) == sheet.rowCount + 1
+#  
+#      # Delete the spreadsheet
+#      ss.delete()
