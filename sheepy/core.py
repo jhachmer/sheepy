@@ -7,6 +7,7 @@ import sys
 
 import ezsheets
 import requests
+from tabulate import tabulate
 
 LOG_FORMAT = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
 
@@ -23,8 +24,8 @@ logger = logging.getLogger("sheepy")
 
 
 URL = "http://www.omdbapi.com/?apikey="
-API_KEY = os.environ["OMDB_API_KEY"]
-TEST = True if os.environ["TEST"] == "True" else False
+API_KEY = os.environ.get("OMDB_API_KEY")
+TEST = True if os.environ.get("TEST") == "True" else False
 SPREADSHEET_ID = (
     os.environ.get("SPREADSHEET_ID", "")
     if not TEST
@@ -196,8 +197,60 @@ def find_free_row(sheet: ezsheets.Sheet) -> int:
     return sheet.rowCount + 1
 
 
+def show_info(movie_data: dict) -> None:
+    """Show the movie information in the CLI.
+
+    This function shows the movie information in the CLI.
+
+    Args:
+        movie_data (dict): The movie data to show.
+    """
+    table = [COLUMNS, extract_movie_data(movie_data)]
+    print(tabulate(table, headers="firstrow", tablefmt="fancy_grid"))
+
+
+def extract_movie_data(movie_data: dict) -> list:
+    """Extract only the necessary data from the movie_data dictionary.
+
+    This function extracts only the necessary data from the movie_data dictionary
+    and returns a new list with the extracted data.
+
+    Args:
+        movie_data (dict): The movie data to extract from.
+
+    Returns:
+        list: A new list with only the necessary data.
+    """
+    extracted_data = []
+    extracted_data.append(movie_data.get("Title", ""))
+    extracted_data.append(movie_data.get("Year", ""))
+    extracted_data.append(movie_data.get("Genre", ""))
+    extracted_data.append(movie_data.get("Runtime", ""))
+    extracted_data.append(movie_data.get("imdbRating", ""))
+    extracted_data.append(
+        next(
+            (
+                rating["Value"]
+                for rating in movie_data.get("Ratings", [])
+                if rating["Source"] == "Rotten Tomatoes"
+            ),
+            "",
+        )
+    )
+    extracted_data.append(movie_data.get("Director", ""))
+    # extracted_data.append(movie_data.get("Plot", ""))
+    extracted_data.append(
+        "Kurzer Text aber bisschen länger\nKurzer Text aber bisschen länger"
+    )
+    extracted_data.append(movie_data.get("Poster", ""))
+    return extracted_data
+
+
+def add_to_sheet(movie_data: dict, sheet: ezsheets.Sheet) -> None:
+    pass
+
+
 if __name__ == "__main__":
     print("This is the core module.")
-    logger.info(get_movie_data("tt0133093"))
-    # s = ezsheets.Spreadsheet(SPREADSHEET_ID)
-    # setup_new_sheet()
+    md = get_movie_data("tt0133093")
+    show_info(md)
