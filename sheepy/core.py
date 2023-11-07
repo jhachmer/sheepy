@@ -8,6 +8,8 @@ import sys
 import ezsheets
 import requests
 from tabulate import tabulate
+from util import insert_newlines
+
 
 LOG_FORMAT = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
 
@@ -104,22 +106,22 @@ def get_movie_data(imdb_id: str) -> dict:
         response = requests.get(URL + API_KEY + "&i=" + imdb_id)
         response.raise_for_status()
     except requests.exceptions.HTTPError as he:
-        logger.error("HTTP Error Code: - " + str(he))
-        raise SystemExit("HTTP Error Code: - " + str(he))
+        logger.error(f"HTTP Error Code: - {str(he)}")
+        raise SystemExit(f"HTTP Error Code: - {str(he)}")
     except requests.exceptions.RequestException as re:
-        logger.error("Request Error: " + str(re))
-        raise SystemExit("Request Error: " + str(re))
+        logger.error(f"Request Error: {str(re)}")
+        raise SystemExit(f"Request Error: {str(re)}")
     except Exception as e:
-        logger.error("General Error: " + str(e))
-        raise SystemExit("General Error: " + str(e))
+        logger.error(f"General Error: {str(e)}")
+        raise SystemExit(f"General Error: {str(e)}")
 
     response = response.json()
     if response["Response"] == "False":
-        logger.error(response["Error"] + " Invalid IMDb ID. Please try again.")
-        logger.debug("Used ID: " + imdb_id)
-        raise SystemExit(response["Error"] + " Invalid IMDb ID. Please try again.")
+        logger.error(f"{response['Error']} - Invalid IMDb ID. Please try again.")
+        logger.debug(f"Used ID: {imdb_id}")
+        raise SystemExit(f"{response['Error']} - Invalid IMDb ID. Please try again.")
 
-    logger.info("Successfully retrieved movie data for " + response["Title"] + ".")
+    logger.info(f"Successfully retrieved movie data for {response['Title']}.")
     return response
 
 
@@ -161,20 +163,14 @@ def setup_new_sheet(sh_id: str = SPREADSHEET_ID) -> str:
 
         sh = ss.createSheet(title="Sheepy", rowCount=1000, columnCount=len(COLUMNS))
         sh.updateRow(1, COLUMNS)
+        logger.info(f"Successfully created spreadsheet: {ss.title} with ID: {ss.id}")
         logger.info(
-            "Successfully created spreadsheet: " + ss.title + " with ID: " + ss.id
+            f"Successfully created sheet: {sh.title} with {str(sh.rowCount)}"
+            f"rows and {str(sh.columnCount)} columns."
         )
-        logger.info(
-            "Successfully created sheet: "
-            + sh.title
-            + " with "
-            + str(sh.rowCount)
-            + " rows and "
-            + str(sh.columnCount)
-            + " columns."
-        )
+
     except ezsheets.EZSheetsException as eze:
-        logger.error("Error creating spreadsheet: " + eze)
+        logger.error(f"Error creating spreadsheet: {eze}")
         raise SystemExit("Error creating spreadsheet: " + eze)
     return (ss, sh)
 
@@ -205,44 +201,53 @@ def show_info(movie_data: dict) -> None:
     Args:
         movie_data (dict): The movie data to show.
     """
-    table = [COLUMNS, extract_movie_data(movie_data)]
-    print(tabulate(table, headers="firstrow", tablefmt="fancy_grid"))
+    table = [list(movie_data.keys()), list(movie_data.values())]
+    print(
+        tabulate(
+            table,
+            headers="firstrow",
+            tablefmt="fancy_grid",
+            stralign="center",
+            numalign="center",
+        )
+    )
 
 
-def extract_movie_data(movie_data: dict) -> list:
-    """Extract only the necessary data from the movie_data dictionary.
+def extract_movie_data(movie_data: dict) -> dict:
+    """
+    Extract only the necessary data from the movie_data dictionary.
 
     This function extracts only the necessary data from the movie_data dictionary
-    and returns a new list with the extracted data.
+    and returns a new dictionary with the extracted data.
 
     Args:
         movie_data (dict): The movie data to extract from.
 
     Returns:
-        list: A new list with only the necessary data.
+        dict: A new dictionary with only the necessary data.
     """
-    extracted_data = []
-    extracted_data.append(movie_data.get("Title", ""))
-    extracted_data.append(movie_data.get("Year", ""))
-    extracted_data.append(movie_data.get("Genre", ""))
-    extracted_data.append(movie_data.get("Runtime", ""))
-    extracted_data.append(movie_data.get("imdbRating", ""))
-    extracted_data.append(
-        next(
-            (
-                rating["Value"]
-                for rating in movie_data.get("Ratings", [])
-                if rating["Source"] == "Rotten Tomatoes"
-            ),
-            "",
-        )
+    extracted_data = {}
+    # TODO: Add a check for the watched column
+    extracted_data["Watched?"] = "Maybe"
+    extracted_data["Title"] = movie_data.get("Title", "")
+    extracted_data["Year"] = movie_data.get("Year", "")
+    extracted_data["Genre"] = movie_data.get("Genre", "")
+    extracted_data["Runtime"] = movie_data.get("Runtime", "")
+    # TODO: Add a check for the suggested by column
+    extracted_data["Suggested by"] = "Someone"
+    extracted_data["IMDb-Rating"] = movie_data.get("imdbRating", "")
+    extracted_data["Tomatometer"] = next(
+        (
+            rating["Value"]
+            for rating in movie_data.get("Ratings", [])
+            if rating["Source"] == "Rotten Tomatoes"
+        ),
+        "",
     )
-    extracted_data.append(movie_data.get("Director", ""))
-    # extracted_data.append(movie_data.get("Plot", ""))
-    extracted_data.append(
-        "Kurzer Text aber bisschen länger\nKurzer Text aber bisschen länger"
-    )
-    extracted_data.append(movie_data.get("Poster", ""))
+    extracted_data["Dirctor"] = movie_data.get("Director", "")
+    extracted_data["Plot"] = insert_newlines(movie_data.get("Plot", ""), 30)
+    extracted_data["Poster"] = insert_newlines(movie_data.get("Poster", ""), 30)
+
     return extracted_data
 
 
@@ -252,5 +257,6 @@ def add_to_sheet(movie_data: dict, sheet: ezsheets.Sheet) -> None:
 
 if __name__ == "__main__":
     print("This is the core module.")
-    md = get_movie_data("tt0133093")
-    show_info(md)
+    movie_data = get_movie_data("tt0133093")
+    specific_data = extract_movie_data(movie_data)
+    show_info(specific_data)
