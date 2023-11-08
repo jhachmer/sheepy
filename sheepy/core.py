@@ -27,6 +27,7 @@ logger = logging.getLogger("sheepy")
 
 URL = "http://www.omdbapi.com/?apikey="
 API_KEY = os.environ.get("OMDB_API_KEY")
+SUGGESTED_BY = os.environ.get("SUGGESTED_BY", "Someone")
 TEST = True if os.environ.get("TEST") == "True" else False
 SPREADSHEET_ID = (
     os.environ.get("SPREADSHEET_ID", "")
@@ -43,7 +44,7 @@ COLUMNS = [
     "Runtime",
     "Suggested by",
     "IMDb Score",
-    "Rotten Tomatoes Score",
+    "Tomatometer",
     "Director",
     "Plot",
     "Movie Poster",
@@ -69,7 +70,7 @@ def read_user_cli_args() -> argparse.Namespace:
         "-a",
         "--add",
         action="store_true",
-        help="Set to add to database (This or -v/--view is required)",
+        help="Set to add to sheet (This or -v/--view is required)",
     )
     mut_req_group.add_argument(
         "-v",
@@ -122,34 +123,11 @@ def get_movie_data(imdb_id: str) -> dict:
         raise SystemExit(f"{response['Error']} - Invalid IMDb ID. Please try again.")
 
     logger.info(f"Successfully retrieved movie data for {response['Title']}.")
+
     return response
 
 
-def _get_api_key() -> str:
-    """Get the API key for the Open Movie Database (OMDb).
-
-    This function retrieves the API key for the
-      Open Movie Database (OMDb) from the environment variables.
-
-    Returns:
-        str: The API key for the Open Movie Database (OMDb).
-    """
-    return os.environ["OMDB_API_KEY"]
-
-
-def _get_spreadsheet_id() -> str:
-    """Get the spreadsheet ID for the Google Sheet.
-
-    This function retrieves the spreadsheet ID for the
-      Google Sheet from the environment variables.
-
-    Returns:
-        str: The spreadsheet ID for the Google Sheet.
-    """
-    return os.environ["SPREADSHEET_ID"]
-
-
-def setup_new_sheet(sh_id: str = SPREADSHEET_ID) -> str:
+def get_spreadsheet_and_sheet(sh_id: str = SPREADSHEET_ID) -> str:
     """Setup a new Google Sheet for the user.
 
     This function creates a new Google Sheet for the user to use.
@@ -160,19 +138,40 @@ def setup_new_sheet(sh_id: str = SPREADSHEET_ID) -> str:
             if sh_id == ""
             else ezsheets.Spreadsheet(sh_id)
         )
+        logger.info(f"Found spreadsheet: {ss.title} with ID: {ss.id}")
 
-        sh = ss.createSheet(title="Sheepy", rowCount=1000, columnCount=len(COLUMNS))
-        sh.updateRow(1, COLUMNS)
-        logger.info(f"Successfully created spreadsheet: {ss.title} with ID: {ss.id}")
-        logger.info(
-            f"Successfully created sheet: {sh.title} with {str(sh.rowCount)}"
-            f"rows and {str(sh.columnCount)} columns."
-        )
+        sh = find_movie_sheet(ss)
+        if sh is None:
+            logger.info("No sheet named 'Sheepy' found. Creating new sheet.")
+            sh = ss.createSheet(title="Sheepy", rowCount=1000, columnCount=len(COLUMNS))
+            sh.updateRow(1, COLUMNS)
+            logger.info(
+                f"Successfully created sheet: {sh.title} with {str(sh.rowCount)}"
+                f"rows and {str(sh.columnCount)} columns."
+            )
 
     except ezsheets.EZSheetsException as eze:
         logger.error(f"Error creating spreadsheet: {eze}")
         raise SystemExit("Error creating spreadsheet: " + eze)
+
     return (ss, sh)
+
+
+def find_movie_sheet(spreadsheet: ezsheets.Spreadsheet) -> ezsheets.Sheet:
+    """
+    Finds and returns the sheet named 'Sheepy' in the given spreadsheet.
+
+    Args:
+        spreadsheet (ezsheets.Spreadsheet): The spreadsheet to search for the sheet.
+
+    Returns:
+        ezsheets.Sheet: The sheet named 'Sheepy', or None if it is not found.
+    """
+    for sheet in spreadsheet.sheets:
+        if sheet.title == "Sheepy":
+            return sheet
+
+    return None
 
 
 def find_free_row(sheet: ezsheets.Sheet) -> int:
@@ -188,18 +187,18 @@ def find_free_row(sheet: ezsheets.Sheet) -> int:
         int: The first free row in the spreadsheet.
     """
     for i in range(1, sheet.rowCount):
-        if sheet.get(1, i) == [""]:
+        if sheet.get(2, i) == "":
             return i
+
     return sheet.rowCount + 1
 
 
 def show_info(movie_data: dict) -> None:
-    """Show the movie information in the CLI.
-
-    This function shows the movie information in the CLI.
+    """
+    Show the movie information in the CLI.
 
     Args:
-        movie_data (dict): The movie data to show.
+        movie_data (dict): A dictionary containing the movie information.
     """
     table = [list(movie_data.keys()), list(movie_data.values())]
     print(
@@ -213,7 +212,7 @@ def show_info(movie_data: dict) -> None:
     )
 
 
-def extract_movie_data(movie_data: dict) -> dict:
+def extract_movie_data(movie_data: dict, watched: bool, add: bool) -> dict:
     """
     Extract only the necessary data from the movie_data dictionary.
 
@@ -227,14 +226,12 @@ def extract_movie_data(movie_data: dict) -> dict:
         dict: A new dictionary with only the necessary data.
     """
     extracted_data = {}
-    # TODO: Add a check for the watched column
-    extracted_data["Watched?"] = "Maybe"
+    extracted_data["Watched?"] = "TRUE" if watched else "FALSE"
     extracted_data["Title"] = movie_data.get("Title", "")
     extracted_data["Year"] = movie_data.get("Year", "")
     extracted_data["Genre"] = movie_data.get("Genre", "")
     extracted_data["Runtime"] = movie_data.get("Runtime", "")
-    # TODO: Add a check for the suggested by column
-    extracted_data["Suggested by"] = "Someone"
+    extracted_data["Suggested by"] = SUGGESTED_BY
     extracted_data["IMDb-Rating"] = movie_data.get("imdbRating", "")
     extracted_data["Tomatometer"] = next(
         (
@@ -242,21 +239,46 @@ def extract_movie_data(movie_data: dict) -> dict:
             for rating in movie_data.get("Ratings", [])
             if rating["Source"] == "Rotten Tomatoes"
         ),
-        "",
+        "N/A",
     )
     extracted_data["Dirctor"] = movie_data.get("Director", "")
-    extracted_data["Plot"] = insert_newlines(movie_data.get("Plot", ""), 30)
-    extracted_data["Poster"] = insert_newlines(movie_data.get("Poster", ""), 30)
+    extracted_data["Plot"] = (
+        movie_data.get("Plot")
+        if add
+        else insert_newlines(movie_data.get("Plot", ""), 30)
+    )
+    extracted_data["Poster"] = (
+        f"=IMAGE(\"{movie_data.get('Poster')}\")"
+        if add
+        else insert_newlines(movie_data.get("Poster", ""), 30)
+    )
 
     return extracted_data
 
 
 def add_to_sheet(movie_data: dict, sheet: ezsheets.Sheet) -> None:
-    pass
+    """
+    Adds a movie's data to the specified Google Sheet.
+
+    Args:
+        movie_data (dict): A dictionary containing the movie's data.
+        sheet (ezsheets.Sheet): The Google Sheet to add the movie's data to.
+    """
+    row = find_free_row(sheet)
+    sheet.updateRow(row, list(movie_data.values()))
+    print(f"Successfully added movie to row: {str(row)}")
 
 
 if __name__ == "__main__":
     print("This is the core module.")
-    movie_data = get_movie_data("tt0133093")
-    specific_data = extract_movie_data(movie_data)
-    show_info(specific_data)
+    user_args = read_user_cli_args()
+    movie_data = extract_movie_data(
+        get_movie_data(user_args.imdb_id[0]), user_args.watched, user_args.add
+    )
+    if user_args.view:
+        print(f"Viewing movie info for {movie_data['Title']}.")
+        show_info(movie_data)
+    elif user_args.add:
+        ss, sh = get_spreadsheet_and_sheet()
+        print(f"Adding movie {movie_data['Title']} to spreadsheet {ss.title}.")
+        add_to_sheet(movie_data, sh)
