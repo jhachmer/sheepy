@@ -127,7 +127,7 @@ def get_movie_data(imdb_id: str) -> dict:
     return response
 
 
-def get_spreadsheet_and_sheet(sh_id: str = SPREADSHEET_ID) -> str:
+def get_spreadsheet_and_sheet(sh_id: str = SPREADSHEET_ID) -> tuple:
     """Setup a new Google Sheet for the user.
 
     This function creates a new Google Sheet for the user to use.
@@ -232,7 +232,7 @@ def extract_movie_data(movie_data: dict, watched: bool, add: bool) -> dict:
     extracted_data["Genre"] = movie_data.get("Genre", "")
     extracted_data["Runtime"] = movie_data.get("Runtime", "")
     extracted_data["Suggested by"] = SUGGESTED_BY
-    extracted_data["IMDb-Rating"] = movie_data.get("imdbRating", "")
+    extracted_data["IMDb-Rating"] = movie_data.get("imdbRating", "N/A")
     extracted_data["Tomatometer"] = next(
         (
             rating["Value"]
