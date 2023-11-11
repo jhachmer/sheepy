@@ -2,6 +2,10 @@
 client_secret_*.json
 token*.pickle
 
+# Logs
+*.log
+logs/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
