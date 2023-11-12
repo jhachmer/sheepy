@@ -10,6 +10,9 @@ import requests
 from tabulate import tabulate
 from util import insert_newlines
 
+if not os.path.exists("logs/tmp.log"):
+    os.mkdir("logs")
+    open("logs/tmp.log", "w").close()
 
 LOG_FORMAT = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
 
@@ -24,7 +27,6 @@ logging.basicConfig(
 
 logger = logging.getLogger("sheepy")
 
-
 URL = "http://www.omdbapi.com/?apikey="
 API_KEY = os.environ.get("OMDB_API_KEY")
 SUGGESTED_BY = os.environ.get("SUGGESTED_BY", "Someone")
@@ -34,7 +36,6 @@ SPREADSHEET_ID = (
     if not TEST
     else os.environ.get("SPREADSHEET_ID_TEST", "")
 )
-
 
 COLUMNS = [
     "Watched?",
@@ -49,10 +50,6 @@ COLUMNS = [
     "Plot",
     "Movie Poster",
 ]
-
-if not os.path.exists("logs/tmp.log"):
-    os.mkdir("logs")
-    open("logs/tmp.log", "w").close()
 
 
 def read_user_cli_args() -> argparse.Namespace:
@@ -152,12 +149,12 @@ def get_spreadsheet_and_sheet(sh_id: str = SPREADSHEET_ID) -> tuple:
 
     except ezsheets.EZSheetsException as eze:
         logger.error(f"Error creating spreadsheet: {eze}")
-        raise SystemExit("Error creating spreadsheet: " + eze)
+        raise SystemExit("Error creating spreadsheet: " + str(eze))
 
-    return (ss, sh)
+    return ss, sh
 
 
-def find_movie_sheet(spreadsheet: ezsheets.Spreadsheet) -> ezsheets.Sheet:
+def find_movie_sheet(spreadsheet: ezsheets.Spreadsheet) -> ezsheets.Sheet | None:
     """
     Finds and returns the sheet named 'Sheepy' in the given spreadsheet.
 
