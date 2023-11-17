@@ -125,7 +125,7 @@ def get_movie_data(imdb_id: str) -> dict:
 
 
 def get_spreadsheet_and_sheet(sh_id: str = SPREADSHEET_ID) -> tuple:
-    """Setup a new Google Sheet for the user.
+    """Set up a new Google Sheet for the user.
 
     This function creates a new Google Sheet for the user to use.
     """
