@@ -7,6 +7,7 @@ import sys
 import time
 import requests
 import urllib
+from dotenv import load_dotenv
 
 LOG_FORMAT = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
 
@@ -20,6 +21,8 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger("sheepy")
+
+load_dotenv()
 
 API_KEY = os.environ.get("OMDB_API_KEY", "")
 CONVERT_ID = os.environ.get("CONVERT_ID", "")
@@ -91,7 +94,7 @@ def convert(row: list) -> list:
         md["Ratings"][1]["Value"],
         md["Director"],
         md["Plot"],
-        f"=IMAGE(\"{md["Poster"]}\")" if len(md["Ratings"]) > 1 else "N/A",
+        f"=IMAGE(\"{md['Poster']}\")" if len(md["Ratings"]) > 1 else "N/A",
     ]
 
 

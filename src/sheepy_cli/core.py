@@ -7,9 +7,10 @@ import sys
 
 import ezsheets
 import requests
+from dotenv import load_dotenv
 from tabulate import tabulate
-from util import insert_newlines
 
+from sheepy_cli.util import insert_newlines
 
 if not os.path.exists("logs/tmp.log"):
     os.mkdir("logs")
@@ -27,6 +28,8 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger("sheepy")
+
+load_dotenv()
 
 URL = "http://www.omdbapi.com/?apikey="
 API_KEY = os.environ.get("OMDB_API_KEY")
