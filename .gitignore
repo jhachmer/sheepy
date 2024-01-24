@@ -2,6 +2,9 @@
 client_secret_*.json
 token*.pickle
 
+#virtual environment
+sheepy-venv/
+
 # Logs
 *.log
 logs/*
