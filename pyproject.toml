@@ -13,7 +13,7 @@ description = "add movies to your google spreadsheet"
 readme = "README.md"
 requires-python = ">3.11"
 dependencies = [
-    "ezsheets",
+    "gspread",
     "tabulate",
     "python-dotenv"
 ]
@@ -21,3 +21,13 @@ dependencies = [
 
 [tool.black]
 line-length = 88
+indent-width = 4
+
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "PL"]

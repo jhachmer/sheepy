@@ -1,12 +1,13 @@
 """YOU PROBABLY SHOULDNT USE THIS"""
 
-import ezsheets
 import logging
 import os
 import sys
 import time
-import requests
 import urllib
+
+import ezsheets
+import requests
 from dotenv import load_dotenv
 
 LOG_FORMAT = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
