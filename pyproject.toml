@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 
 
 [project]
-name = "sheepy-cli"
+name = "sheepy"
 version = "0.0.1"
 authors = [{name=  "Jannes Hachmer", email= "jannes.hachmer@gmail.com"}]
 description = "add movies to your google spreadsheet"
@@ -21,13 +21,3 @@ dependencies = [
 
 [tool.black]
 line-length = 88
-indent-width = 4
-
-
-[tool.ruff]
-line-length = 88
-indent-width = 4
-
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "PL"]
