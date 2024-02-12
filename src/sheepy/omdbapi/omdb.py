@@ -1,6 +1,5 @@
 """This module contains the core functionality of the sheepy application."""
 
-import argparse
 import os
 
 import requests
@@ -15,17 +14,10 @@ load_dotenv()
 
 URL = "http://www.omdbapi.com/?apikey="
 API_KEY = os.environ.get("OMDB_API_KEY")
-
 if API_KEY is None:
     raise SystemExit(f"API_KEY is not set. {API_KEY}")
-
 SUGGESTED_BY = os.environ.get("SUGGESTED_BY", "Someone")
-TEST = True if os.environ.get("TEST", "False") == "True" else False
-SPREADSHEET_ID = (
-    os.environ.get("SPREADSHEET_ID", "")
-    if not TEST
-    else os.environ.get("SPREADSHEET_ID_TEST", "")
-)
+SPREADSHEET_ID = os.environ.get("SPREADSHEET_ID", "")
 
 omdb_logger = get_logger(__name__)
 
@@ -42,39 +34,6 @@ COLUMNS = [
     "Plot",
     "Movie Poster",
 ]
-
-
-def read_user_cli_args() -> argparse.Namespace:
-    """Handles the CLI user interactions.
-
-    Returns:
-        argparse.Namespace: Populated namespace object
-    """
-    parser = argparse.ArgumentParser(
-        description="Add or view movies to your personal database."
-    )
-    parser.add_argument("imdb_id", nargs=1, type=str, help="Enter the movies imdb id.")
-    mut_req_group = parser.add_mutually_exclusive_group(required=True)
-    mut_req_group.add_argument(
-        "-a",
-        "--add",
-        action="store_true",
-        help="Set to add to sheet (This or -v/--view is required)",
-    )
-    mut_req_group.add_argument(
-        "-v",
-        "--view",
-        action="store_true",
-        help="Set to view in the CLI (This or -a/--add is required)",
-    )
-    parser.add_argument(
-        "-w",
-        "--watched",
-        action="store_true",
-        help="Set to mark movie as already watched (Defaults to False)",
-    )
-
-    return parser.parse_args()
 
 
 def get_movie_data(imdb_id: str) -> dict:
