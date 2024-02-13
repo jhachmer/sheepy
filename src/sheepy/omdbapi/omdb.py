@@ -1,6 +1,8 @@
 """This module contains the core functionality of the sheepy application."""
 
 import os
+from dataclasses import asdict, dataclass
+from typing import Any
 
 import requests
 from dotenv import load_dotenv
@@ -34,6 +36,23 @@ COLUMNS = [
     "Plot",
     "Movie Poster",
 ]
+
+
+@dataclass
+class Movie:
+    """Represents movie from OMDb API."""
+
+    watched: str
+    title: str
+    year: str
+    genre: str
+    runtime: str
+    suggested_by: str
+    imdb_rating: str
+    tomatometer: str
+    director: str
+    plot: str
+    poster: str
 
 
 def get_movie_data(imdb_id: str) -> dict:
@@ -98,7 +117,7 @@ def show_info(movie_data: dict) -> None:
     )
 
 
-def extract_movie_data(movie_data: dict, watched: bool, add: bool) -> dict:
+def extract_movie_data(movie_data: dict[str, Any], watched: bool, add: bool) -> dict:
     """Extract only the necessary data from the movie_data dictionary.
 
     Args:
@@ -109,32 +128,45 @@ def extract_movie_data(movie_data: dict, watched: bool, add: bool) -> dict:
     Returns:
         dict: A new dictionary with only the necessary data.
     """
-    extracted_data: dict[str, str] = {}
-    extracted_data["Watched?"] = "TRUE" if watched else "FALSE"
-    extracted_data["Title"] = movie_data.get("Title", "")
-    extracted_data["Year"] = movie_data.get("Year", "")
-    extracted_data["Genre"] = movie_data.get("Genre", "")
-    extracted_data["Runtime"] = movie_data.get("Runtime", "")
-    extracted_data["Suggested by"] = SUGGESTED_BY
-    extracted_data["IMDb-Rating"] = movie_data.get("imdbRating", "N/A")
-    extracted_data["Tomatometer"] = next(
+    movie: Movie = Movie(
+        watched="TRUE" if watched else "FALSE",
+        title=movie_data.get("Title", ""),
+        year=movie_data.get("Year", ""),
+        genre=movie_data.get("Genre", ""),
+        runtime=movie_data.get("Runtime", ""),
+        suggested_by=SUGGESTED_BY,
+        imdb_rating=movie_data.get("imdbRating", "N/A"),
+        tomatometer=extract_tomatometer(movie_data.get("Ratings", "N/A")),
+        director=movie_data.get("Director", ""),
+        plot=(
+            movie_data.get("Plot", "")
+            if add
+            else insert_newlines(movie_data.get("Plot", ""), 30)
+        ),
+        poster=(
+            f"=IMAGE(\"{movie_data.get('Poster')}\")"
+            if add
+            else insert_newlines(movie_data.get("Poster", ""), 30)
+        ),
+    )
+    return asdict(movie)
+
+
+def extract_tomatometer(ratings: list) -> str:
+    """Extracts Rotten Tomato Rating from movie data dictionary.
+
+    Args:
+        ratings (list): List of Ratings from OMDb API
+
+    Returns:
+        str: Rotten Tomato Rating in Percentage
+    """
+    tomato_rating: str = next(
         (
             rating["Value"]
-            for rating in movie_data.get("Ratings", [])
+            for rating in ratings
             if rating["Source"] == "Rotten Tomatoes"
         ),
         "N/A",
     )
-    extracted_data["Dirctor"] = movie_data.get("Director", "")
-    extracted_data["Plot"] = (
-        movie_data.get("Plot", "")
-        if add
-        else insert_newlines(movie_data.get("Plot", ""), 30)
-    )
-    extracted_data["Poster"] = (
-        f"=IMAGE(\"{movie_data.get('Poster')}\")"
-        if add
-        else insert_newlines(movie_data.get("Poster", ""), 30)
-    )
-
-    return extracted_data
+    return tomato_rating
