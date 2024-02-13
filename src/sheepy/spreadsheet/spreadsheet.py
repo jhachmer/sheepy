@@ -103,6 +103,12 @@ class SheepySpreadsheet:
         self.worksheet_index = str(self.worksheet.index)
 
     def setup_sheet(self) -> None:
+        """Sets up Sheet Headers
+        Headers are defined in class constant HEADERS
+
+        Raises:
+            ValueError: Raises Exception if no worksheet is selected
+        """
         if self.worksheet is None:
             raise ValueError("Select a worksheet first")
         self.worksheet.update(
@@ -112,6 +118,11 @@ class SheepySpreadsheet:
         )
 
     def check_headers(self) -> None:
+        """Checks if Sheet has correct headers
+
+        Raises:
+            ValueError: Raises Exception if no worksheet is selected
+        """
         if self.worksheet is None:
             raise ValueError("Select a worksheet first")
         values_list = self.worksheet.row_values(1)
