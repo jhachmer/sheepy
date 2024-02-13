@@ -14,8 +14,21 @@ readme = "README.md"
 requires-python = ">3.11"
 dependencies = [
     "gspread",
+    "gspread-formatting",
     "tabulate",
     "python-dotenv"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "isort",
+    "pylint",
+    "flake8",
+    "flake8-bugbear",
+    "pep8-naming",
+    "flake8-builtins",
+    "flake8-comprehensions",
 ]
 
 
