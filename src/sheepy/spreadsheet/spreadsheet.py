@@ -4,7 +4,7 @@ import os
 from typing import Self
 
 import gspread
-from gspread.utils import rowcol_to_a1
+from gspread.utils import ValueInputOption, rowcol_to_a1
 from requests import Response
 
 from sheepy.util.logger import get_logger
@@ -13,7 +13,19 @@ from sheepy.util.logger import get_logger
 class SheepySpreadsheet:
     """Sheepy Spreadsheet offers functionality to insert data into Google Spreadsheet"""
 
-    logger = get_logger(__name__)
+    HEADERS = [
+        "Watched?",
+        "Title",
+        "Year",
+        "Genre",
+        "Runtime",
+        "Suggested by",
+        "IMDB-Score",
+        "Tomatometer",
+        "Director",
+        "Plot",
+        "Movie Poster",
+    ]
 
     def __init__(self) -> None:
         try:
@@ -26,6 +38,8 @@ class SheepySpreadsheet:
         self.worksheet: gspread.worksheet.Worksheet | None = None
         self.spreadsheet_id: str | None = None
         self.worksheet_index: str | None = None
+
+        self.logger = get_logger(__name__)
 
     @classmethod
     def from_env_file(cls) -> Self:
@@ -44,8 +58,8 @@ class SheepySpreadsheet:
             sh.spreadsheet_id = os.environ.get("SPREADSHEET_ID")
             sh.worksheet_index = os.environ.get("WORKSHEET_INDEX")
             if sh.worksheet_index is None or sh.spreadsheet_id is None:
-                SheepySpreadsheet.logger.debug(sh.spreadsheet_id)
-                SheepySpreadsheet.logger.debug(sh.worksheet_index)
+                sh.logger.debug(sh.spreadsheet_id)
+                sh.logger.debug(sh.worksheet_index)
                 raise ValueError(
                     f"One or more necessary values are None:"
                     f" {sh.spreadsheet_id=} | {sh.worksheet_index=}"
@@ -57,6 +71,7 @@ class SheepySpreadsheet:
         except gspread.exceptions.WorksheetNotFound as wnf:
             raise SystemExit("Can not select worksheet.") from wnf
         sh.set_instance_variables()
+        sh.check_headers()
         return sh
 
     @classmethod
@@ -70,6 +85,7 @@ class SheepySpreadsheet:
         sh.spreadsheet = sh.client.create("Sheepy_Spreadsheet")
         sh.worksheet = sh.spreadsheet.add_worksheet("Sheepy", rows=1000, cols=20)
         sh.set_instance_variables()
+        sh.check_headers()
         return sh
 
     def set_instance_variables(self) -> None:
@@ -85,6 +101,23 @@ class SheepySpreadsheet:
             )
         self.spreadsheet_id = self.spreadsheet.id
         self.worksheet_index = str(self.worksheet.index)
+
+    def setup_sheet(self) -> None:
+        if self.worksheet is None:
+            raise ValueError("Select a worksheet first")
+        self.worksheet.update(
+            range_name="A1",
+            values=[list(SheepySpreadsheet.HEADERS)],
+            value_input_option=ValueInputOption.user_entered,
+        )
+
+    def check_headers(self) -> None:
+        if self.worksheet is None:
+            raise ValueError("Select a worksheet first")
+        values_list = self.worksheet.row_values(1)
+        if SheepySpreadsheet.HEADERS != values_list:
+            self.logger.info("Updated Headers %s", SheepySpreadsheet.HEADERS)
+            self.setup_sheet()
 
     def transfer_ownership(self, email: str) -> None:
         """Transfer Ownership of Spreadsheet
@@ -112,7 +145,7 @@ class SheepySpreadsheet:
             )
         resp: Response = self.spreadsheet.transfer_ownership(permission_id=perm_id)
         if resp.status_code == 200:
-            SheepySpreadsheet.logger.info(
+            self.logger.info(
                 "Ownership transfer initiated."
                 + "Accept in Google Spreadsheet Web Interface"
             )
@@ -149,7 +182,7 @@ class SheepySpreadsheet:
         Returns:
             gspread.worksheet.Worksheet: Instance of Worksheet
         """
-        SheepySpreadsheet.logger.debug(index)
+        self.logger.debug(index)
         if not self.spreadsheet:
             raise ValueError(
                 "Can not select worksheet because there is no spreadsheet selected"
@@ -178,6 +211,7 @@ class SheepySpreadsheet:
         if not self.worksheet:
             raise ValueError("Select a worksheet first")
         row_list: list = list(filter(None, self.worksheet.col_values(2)))
+        self.logger.info("First free row: %s", len(row_list) + 1)
         return len(row_list) + 1
 
     def add_movie_to_sheet(self, movie_dict: dict[str, str]) -> None:
@@ -191,6 +225,10 @@ class SheepySpreadsheet:
         insert_row: int = self.find_free_row()
         a1_notation: str = rowcol_to_a1(insert_row, 1)
         values: list = [list(movie_dict.values())]
-        SheepySpreadsheet.logger.info("A1-Notation %s", a1_notation)
-        SheepySpreadsheet.logger.info("%s", values)
-        self.worksheet.update(range_name=a1_notation, values=values)
+        self.logger.info("A1-Notation %s", a1_notation)
+        self.logger.info("%s", values)
+        self.worksheet.update(
+            range_name=a1_notation,
+            values=values,
+            value_input_option=ValueInputOption.user_entered,
+        )
