@@ -24,8 +24,8 @@
     <method v="2">
       <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_black" />
       <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_isort" />
-      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_pylint" />
       <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_flake8" />
+      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_pylint" />
     </method>
   </configuration>
 </component>
