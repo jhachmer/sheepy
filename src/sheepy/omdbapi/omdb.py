@@ -15,27 +15,13 @@ from sheepy.util.util import insert_newlines
 load_dotenv()
 
 URL = "http://www.omdbapi.com/?apikey="
-API_KEY = os.environ.get("OMDB_API_KEY")
-if API_KEY is None:
+API_KEY = os.environ.get("OMDB_API_KEY", "")
+if API_KEY == "":
     raise SystemExit(f"API_KEY is not set. {API_KEY}")
 SUGGESTED_BY = os.environ.get("SUGGESTED_BY", "Someone")
 SPREADSHEET_ID = os.environ.get("SPREADSHEET_ID", "")
 
 omdb_logger = get_logger(__name__)
-
-COLUMNS = [
-    "Watched?",
-    "Title",
-    "Year",
-    "Genre",
-    "Runtime",
-    "Suggested by",
-    "IMDb Score",
-    "Tomatometer",
-    "Director",
-    "Plot",
-    "Movie Poster",
-]
 
 
 @dataclass
@@ -136,7 +122,7 @@ def extract_movie_data(movie_data: dict[str, Any], watched: bool, add: bool) -> 
         runtime=movie_data.get("Runtime", ""),
         suggested_by=SUGGESTED_BY,
         imdb_rating=movie_data.get("imdbRating", "N/A"),
-        tomatometer=extract_tomatometer(movie_data.get("Ratings", "N/A")),
+        tomatometer=extract_tomatometer(movie_data.get("Ratings")),
         director=movie_data.get("Director", ""),
         plot=(
             movie_data.get("Plot", "")
