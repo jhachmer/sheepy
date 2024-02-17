@@ -29,6 +29,8 @@ dev = [
     "pep8-naming",
     "flake8-builtins",
     "flake8-comprehensions",
+    "mypy",
+    "pytest",
 ]
 
 
