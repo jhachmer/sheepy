@@ -8,38 +8,53 @@ from gspread.utils import ValueInputOption, rowcol_to_a1
 from requests import Response
 
 from sheepy.util.logger import get_logger
+from sheepy.spreadsheet.sheet_utils import COLUMNS
 
 
 class SheepySpreadsheet:
     """Sheepy Spreadsheet offers functionality to insert data into Google Spreadsheet"""
 
-    HEADERS = [
-        "Watched?",
-        "Title",
-        "Year",
-        "Genre",
-        "Runtime",
-        "Suggested by",
-        "IMDB-Score",
-        "Tomatometer",
-        "Director",
-        "Plot",
-        "Movie Poster",
-    ]
+    def __init__(
+            self, spreadsheet_id: str | None = None, worksheet_index: str | None = None
+    ) -> None:
+        """Constructor of Spreadsheet
 
-    def __init__(self) -> None:
+        Args:
+            spreadsheet_id (str | None, optional): ID of Spreadsheet. Defaults to None.
+            worksheet_index (str | None, optional): Worksheet Index. Defaults to None.
+
+        Raises:
+            ValueError: _description_
+            SystemExit: _description_
+            SystemExit: _description_
+            SystemExit: _description_
+        """
         try:
             self.client: gspread.client.Client = gspread.service_account()
         except FileNotFoundError as fnfe:
             raise SystemExit(
                 f"Unable to create service account. Check credentials file. {str(fnfe)}"
             ) from fnfe
+
         self.spreadsheet: gspread.spreadsheet.Spreadsheet | None = None
         self.worksheet: gspread.worksheet.Worksheet | None = None
         self.spreadsheet_id: str | None = None
         self.worksheet_index: str | None = None
 
         self.logger = get_logger(__name__)
+
+        if (spreadsheet_id is None) != (worksheet_index is None):
+            raise ValueError("Please provide spreadsheet ID and worksheet index")
+        elif spreadsheet_id is not None and worksheet_index is not None:
+            try:
+                self.spreadsheet_id = spreadsheet_id
+                self.worksheet_index = worksheet_index
+                self.spreadsheet = self.client.open_by_key(spreadsheet_id)
+                self.worksheet = self.select_worksheet(int(worksheet_index))
+            except gspread.exceptions.SpreadsheetNotFound as snf:
+                raise SystemExit(f"Could not find spreadsheet. {str(snf)}") from snf
+            except gspread.exceptions.WorksheetNotFound as wnf:
+                raise SystemExit("Can not select worksheet.") from wnf
 
     @classmethod
     def from_env_file(cls) -> Self:
@@ -101,34 +116,6 @@ class SheepySpreadsheet:
             )
         self.spreadsheet_id = self.spreadsheet.id
         self.worksheet_index = str(self.worksheet.index)
-
-    def setup_sheet(self) -> None:
-        """Sets up Sheet Headers
-        Headers are defined in class constant HEADERS
-
-        Raises:
-            ValueError: Raises Exception if no worksheet is selected
-        """
-        if self.worksheet is None:
-            raise ValueError("Select a worksheet first")
-        self.worksheet.update(
-            range_name="A1",
-            values=[list(SheepySpreadsheet.HEADERS)],
-            value_input_option=ValueInputOption.user_entered,
-        )
-
-    def check_headers(self) -> None:
-        """Checks if Sheet has correct headers
-
-        Raises:
-            ValueError: Raises Exception if no worksheet is selected
-        """
-        if self.worksheet is None:
-            raise ValueError("Select a worksheet first")
-        values_list = self.worksheet.row_values(1)
-        if SheepySpreadsheet.HEADERS != values_list:
-            self.logger.info("Updated Headers %s", SheepySpreadsheet.HEADERS)
-            self.setup_sheet()
 
     def transfer_ownership(self, email: str) -> None:
         """Transfer Ownership of Spreadsheet
@@ -225,21 +212,3 @@ class SheepySpreadsheet:
         self.logger.info("First free row: %s", len(row_list) + 1)
         return len(row_list) + 1
 
-    def add_movie_to_sheet(self, movie_dict: dict[str, str]) -> None:
-        """Adds movie to spreadsheet
-
-        Args:
-            movie_dict (dict): Dictionary with movie data
-        """
-        if self.worksheet is None:
-            raise ValueError("Select a worksheet first")
-        insert_row: int = self.find_free_row()
-        a1_notation: str = rowcol_to_a1(insert_row, 1)
-        values: list = [list(movie_dict.values())]
-        self.logger.info("A1-Notation %s", a1_notation)
-        self.logger.info("%s", values)
-        self.worksheet.update(
-            range_name=a1_notation,
-            values=values,
-            value_input_option=ValueInputOption.user_entered,
-        )
