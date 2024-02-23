@@ -8,7 +8,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "sheepy"
 version = "0.0.1"
-authors = [{name=  "Jannes Hachmer", email= "jannes.hachmer@gmail.com"}]
+authors = [{ name = "Jannes Hachmer", email = "jannes.hachmer@gmail.com" }]
 description = "add movies to your google spreadsheet"
 readme = "README.md"
 requires-python = ">3.11"
@@ -23,12 +23,7 @@ dependencies = [
 dev = [
     "black",
     "isort",
-    "pylint",
-    "flake8",
-    "flake8-bugbear",
-    "pep8-naming",
-    "flake8-builtins",
-    "flake8-comprehensions",
+    "ruff",
     "mypy",
     "pytest",
 ]
@@ -38,4 +33,21 @@ dev = [
 line-length = 88
 
 [tool.ruff]
-select = ["ALL"]
+exclude = [
+    ".venv",
+    "logs",
+]
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "F",
+    "E",
+    "W",
+    "N",
+    "I",
+    "C90",
+    "B",
+    "C4",
+    "A"
+]
