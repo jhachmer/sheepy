@@ -4,18 +4,18 @@ import os
 from typing import Self
 
 import gspread
-from gspread.utils import ValueInputOption, rowcol_to_a1
 from requests import Response
 
 from sheepy.util.logger import get_logger
-from sheepy.spreadsheet.sheet_utils import COLUMNS
+
+from .formatting import check_headers
 
 
 class SheepySpreadsheet:
     """Sheepy Spreadsheet offers functionality to insert data into Google Spreadsheet"""
 
     def __init__(
-            self, spreadsheet_id: str | None = None, worksheet_index: str | None = None
+        self, spreadsheet_id: str | None = None, worksheet_index: str | None = None
     ) -> None:
         """Constructor of Spreadsheet
 
@@ -51,6 +51,7 @@ class SheepySpreadsheet:
                 self.worksheet_index = worksheet_index
                 self.spreadsheet = self.client.open_by_key(spreadsheet_id)
                 self.worksheet = self.select_worksheet(int(worksheet_index))
+                check_headers(self)
             except gspread.exceptions.SpreadsheetNotFound as snf:
                 raise SystemExit(f"Could not find spreadsheet. {str(snf)}") from snf
             except gspread.exceptions.WorksheetNotFound as wnf:
@@ -86,7 +87,7 @@ class SheepySpreadsheet:
         except gspread.exceptions.WorksheetNotFound as wnf:
             raise SystemExit("Can not select worksheet.") from wnf
         sh.set_instance_variables()
-        sh.check_headers()
+        check_headers(sh)
         return sh
 
     @classmethod
@@ -100,7 +101,7 @@ class SheepySpreadsheet:
         sh.spreadsheet = sh.client.create("Sheepy_Spreadsheet")
         sh.worksheet = sh.spreadsheet.add_worksheet("Sheepy", rows=1000, cols=20)
         sh.set_instance_variables()
-        sh.check_headers()
+        check_headers(sh)
         return sh
 
     def set_instance_variables(self) -> None:
@@ -211,4 +212,3 @@ class SheepySpreadsheet:
         row_list: list = list(filter(None, self.worksheet.col_values(2)))
         self.logger.info("First free row: %s", len(row_list) + 1)
         return len(row_list) + 1
-
