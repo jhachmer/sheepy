@@ -10,7 +10,7 @@ from requests import Response
 from tabulate import tabulate
 
 from sheepy.util.logger import get_logger
-from sheepy.util.util import insert_newlines
+from sheepy.util.string_util import insert_newlines
 
 load_dotenv()
 
