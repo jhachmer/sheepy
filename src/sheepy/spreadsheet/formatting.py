@@ -9,6 +9,7 @@ from gspread_formatting import (
     TextFormat,
     format_cell_range,
     set_data_validation_for_cell_range,
+    set_frozen,
 )
 
 from .sheet_util import (
@@ -42,6 +43,7 @@ def setup_headers(ss: "SheepySpreadsheet") -> None:
         values=[list(COLUMNS)],
         value_input_option=ValueInputOption.user_entered,
     )
+    freeze_header_row(ss)
 
 
 def check_headers(ss: "SheepySpreadsheet") -> None:
@@ -75,6 +77,7 @@ def header_format(ss: "SheepySpreadsheet") -> None:
         horizontalAlignment="CENTER",
     )
     format_cell_range(ss.worksheet, SHEET_HEADER_RANGE, fmt)
+    freeze_header_row(ss)
 
 
 def setup_checkboxes(
@@ -85,6 +88,10 @@ def setup_checkboxes(
             BooleanCondition("BOOLEAN", ["True", "False"]), showCustomUi=True
         )
     set_data_validation_for_cell_range(ss.worksheet, cell, validation)
+
+
+def freeze_header_row(ss: "SheepySpreadsheet", row: int = 1) -> None:
+    set_frozen(ss.worksheet, rows=row)
 
 
 def set_height_and_width(ss: "SheepySpreadsheet") -> None:
