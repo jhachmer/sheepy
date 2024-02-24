@@ -5,6 +5,7 @@ from gspread_formatting import (
     BooleanCondition,
     CellFormat,
     DataValidationRule,
+    SpreadsheetBatchUpdater,
     TextFormat,
     format_cell_range,
     set_data_validation_for_cell_range,
@@ -62,7 +63,10 @@ def setup_sheet_text_and_color(ss: "SheepySpreadsheet") -> None:
         textFormat=TextFormat(foregroundColor=SHEET_TEXT_COLOR),
         horizontalAlignment="CENTER",
     )
-    format_cell_range(ss.worksheet, SHEET_COLUMNS_RANGE, fmt)
+    # format_cell_range(ss.worksheet, SHEET_COLUMNS_RANGE, fmt)
+    batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
+    batch.format_cell_range(ss.worksheet, SHEET_COLUMNS_RANGE, fmt)
+    batch.execute()
 
 
 def header_format(ss: "SheepySpreadsheet") -> None:
