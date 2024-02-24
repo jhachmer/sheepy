@@ -6,7 +6,8 @@ from gspread_formatting import (
     CellFormat,
     DataValidationRule,
     TextFormat,
-    format_cell_range, set_data_validation_for_cell_range,
+    format_cell_range,
+    set_data_validation_for_cell_range,
 )
 
 from .sheet_util import (
@@ -72,12 +73,12 @@ def header_format(ss: "SheepySpreadsheet") -> None:
     format_cell_range(ss.worksheet, SHEET_HEADER_RANGE, fmt)
 
 
-def setup_checkboxes(ss: "SheepySpreadsheet", cell: str,
-                     validation: DataValidationRule = None) -> None:
+def setup_checkboxes(
+    ss: "SheepySpreadsheet", cell: str, validation: DataValidationRule = None
+) -> None:
     if validation is None:
         validation = DataValidationRule(
-            BooleanCondition("BOOLEAN", ["True", "False"]),
-            showCustomUi=True
+            BooleanCondition("BOOLEAN", ["True", "False"]), showCustomUi=True
         )
     set_data_validation_for_cell_range(ss.worksheet, cell, validation)
 
