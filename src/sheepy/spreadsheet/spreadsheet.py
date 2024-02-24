@@ -9,7 +9,7 @@ from requests import Response
 
 from sheepy.util.logger import get_logger
 
-from .formatting import check_headers, setup_checkboxes
+from .formatting import check_headers, setup_checkboxes, setup_sheet_formatting
 
 
 class SheepySpreadsheet:
@@ -108,6 +108,7 @@ class SheepySpreadsheet:
         sh.spreadsheet = sh.client.create("Sheepy_Spreadsheet")
         sh.worksheet = sh.spreadsheet.add_worksheet("Sheepy", rows=1000, cols=20)
         sh.set_instance_variables()
+        setup_sheet_formatting(sh)
         check_headers(sh)
         return sh
 
