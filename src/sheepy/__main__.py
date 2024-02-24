@@ -17,10 +17,10 @@ def main() -> None:
     )
     sheepy_sheet: SheepySpreadsheet = get_env_spreadsheet()
     sheepy_sheet.add_values_to_sheet(movie_info)
-    logger.info(f"{'-'*40}\n"
+    logger.info(f"\n{'#'*40}\n"
                 f"Added Movie Info: {movie_info}\n"
                 f"to Spreadsheet:\n{sheepy_sheet}\n"
-                f"{'-'*40}")
+                f"{'#'*40}")
 
 
 if __name__ == "__main__":
