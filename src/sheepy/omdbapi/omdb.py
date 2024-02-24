@@ -41,7 +41,7 @@ class Movie:
     poster: str
 
 
-def get_movie_data(imdb_id: str) -> dict:
+def _get_movie_data(imdb_id: str) -> dict:
     """Get movie data from the Open Movie Database (OMDb) API.
 
     Args:
@@ -103,7 +103,9 @@ def show_info(movie_data: dict) -> None:
     )
 
 
-def extract_movie_data(movie_data: dict[str, Any], watched: bool, add: bool) -> dict:
+def _extract_movie_data(
+    movie_data: dict[str, Any], watched: bool, add: bool
+) -> dict[str, str]:
     """Extract only the necessary data from the movie_data dictionary.
 
     Args:
@@ -122,7 +124,7 @@ def extract_movie_data(movie_data: dict[str, Any], watched: bool, add: bool) -> 
         runtime=movie_data.get("Runtime", ""),
         suggested_by=SUGGESTED_BY,
         imdb_rating=movie_data.get("imdbRating", "N/A"),
-        tomatometer=extract_tomatometer(movie_data.get("Ratings")),
+        tomatometer=_extract_tomatometer(movie_data.get("Ratings", [])),
         director=movie_data.get("Director", ""),
         plot=(
             movie_data.get("Plot", "")
@@ -138,7 +140,7 @@ def extract_movie_data(movie_data: dict[str, Any], watched: bool, add: bool) -> 
     return asdict(movie)
 
 
-def extract_tomatometer(ratings: list) -> str:
+def _extract_tomatometer(ratings: list) -> str:
     """Extracts Rotten Tomato Rating from movie data dictionary.
 
     Args:
@@ -156,3 +158,10 @@ def extract_tomatometer(ratings: list) -> str:
         "N/A",
     )
     return tomato_rating
+
+
+def process_movie_request(
+    imdb_id: str, watched: bool = False, add: bool = True
+) -> dict[str, str]:
+    movie_info: dict = _get_movie_data(imdb_id)
+    return _extract_movie_data(movie_info, watched, add)
