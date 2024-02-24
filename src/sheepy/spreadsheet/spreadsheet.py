@@ -4,11 +4,12 @@ import os
 from typing import Self
 
 import gspread
+from gspread.utils import ValueInputOption, rowcol_to_a1
 from requests import Response
 
 from sheepy.util.logger import get_logger
 
-from .formatting import check_headers
+from .formatting import check_headers, setup_checkboxes
 
 
 class SheepySpreadsheet:
@@ -56,6 +57,12 @@ class SheepySpreadsheet:
                 raise SystemExit(f"Could not find spreadsheet. {str(snf)}") from snf
             except gspread.exceptions.WorksheetNotFound as wnf:
                 raise SystemExit("Can not select worksheet.") from wnf
+
+    def __repr__(self):
+        return (
+            f"Spreadsheet ID: {self.spreadsheet_id}\n"
+            f"Worksheet index: {self.worksheet_index}"
+        )
 
     @classmethod
     def from_env_file(cls) -> Self:
@@ -212,3 +219,18 @@ class SheepySpreadsheet:
         row_list: list = list(filter(None, self.worksheet.col_values(2)))
         self.logger.info("First free row: %s", len(row_list) + 1)
         return len(row_list) + 1
+
+    def add_values_to_sheet(self, movie_dict: dict) -> None:
+        if self.worksheet is None:
+            raise ValueError("Select a worksheet first")
+        insert_row: int = self.find_free_row()
+        a1_notation: str = rowcol_to_a1(insert_row, 1)
+        values: list = [list(movie_dict.values())]
+        self.logger.info("A1-Notation %s", a1_notation)
+        self.logger.info("%s", values)
+        setup_checkboxes(ss=self, cell=f"A{insert_row}")
+        self.worksheet.update(
+            range_name=a1_notation,
+            values=values,
+            value_input_option=ValueInputOption.user_entered,
+        )
