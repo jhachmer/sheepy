@@ -1,4 +1,5 @@
 """Utility Constants"""
+
 from gspread_formatting import Color
 
 COLUMNS = [
