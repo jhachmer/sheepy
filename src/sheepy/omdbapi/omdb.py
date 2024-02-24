@@ -17,7 +17,7 @@ load_dotenv()
 URL = "http://www.omdbapi.com/?apikey="
 API_KEY = os.environ.get("OMDB_API_KEY", "")
 if API_KEY == "":
-    raise SystemExit(f"API_KEY is not set. {API_KEY}")
+    raise SystemExit(f"Error: API_KEY is not set. {API_KEY}")
 SUGGESTED_BY = os.environ.get("SUGGESTED_BY", "Someone")
 SPREADSHEET_ID = os.environ.get("SPREADSHEET_ID", "")
 
@@ -163,5 +163,16 @@ def _extract_tomatometer(ratings: list) -> str:
 def process_movie_request(
     imdb_id: str, watched: bool = False, add: bool = True
 ) -> dict[str, str]:
+    """
+    Processes movie request from OMDb API and creates dict with movie data
+
+    Args:
+        imdb_id (str): IMDB ID
+        watched (bool, optional): Whether to tick watched?-checkbox. Defaults to False
+        add (bool, optional): Whether to add movie data. Defaults to True
+
+    Returns:
+        dict: Dictionary containing movie data
+    """
     movie_info: dict = _get_movie_data(imdb_id)
     return _extract_movie_data(movie_info, watched, add)
