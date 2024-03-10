@@ -17,7 +17,19 @@ from .sheet_util import (
     SHEET_BACKGROUND_COLOR,
     SHEET_COLUMNS_RANGE,
     SHEET_HEADER_RANGE,
+    SHEET_ROW_HEIGHT,
     SHEET_TEXT_COLOR,
+    SHEET_COL_A_WIDTH,
+    SHEET_COL_B_WIDTH,
+    SHEET_COL_C_WIDTH,
+    SHEET_COL_D_WIDTH,
+    SHEET_COL_E_WIDTH,
+    SHEET_COL_F_WIDTH,
+    SHEET_COL_G_WIDTH,
+    SHEET_COL_H_WIDTH,
+    SHEET_COL_I_WIDTH,
+    SHEET_COL_J_WIDTH,
+    SHEET_COL_K_WIDTH,
 )
 
 if TYPE_CHECKING:
@@ -67,6 +79,7 @@ def setup_sheet_text_and_color(ss: "SheepySpreadsheet") -> None:
     )
     # format_cell_range(ss.worksheet, SHEET_COLUMNS_RANGE, fmt)
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
+    # noinspection PyTestUnpassedFixture
     batch.format_cell_range(ss.worksheet, SHEET_COLUMNS_RANGE, fmt)
     batch.execute()
 
@@ -94,5 +107,21 @@ def freeze_header_row(ss: "SheepySpreadsheet", row: int = 1) -> None:
     set_frozen(ss.worksheet, rows=row)
 
 
-def set_height_and_width(ss: "SheepySpreadsheet") -> None:
-    pass
+def set_height_and_width(ss: "SheepySpreadsheet", row: int) -> None:
+    batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
+    ws = ss.worksheet
+    # Set height of row
+    batch.set_row_height(ws, f"{row}", SHEET_ROW_HEIGHT)
+    batch.set_column_width(ws, *SHEET_COL_A_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_B_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_C_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_D_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_E_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_F_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_G_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_H_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_I_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_J_WIDTH)
+    batch.set_column_width(ws, *SHEET_COL_K_WIDTH)
+
+    batch.execute()
