@@ -3,6 +3,5 @@
   <component name="RuffConfigService">
     <option name="globalRuffExecutablePath" value="C:\Users\janne\AppData\Local\Programs\Python\Python312\Scripts\ruff.exe" />
     <option name="projectRuffExecutablePath" value="C:\Users\janne\Documents\Code\sheepy-cli\.venv\Scripts\ruff.exe" />
-    <option name="runRuffOnReformatCode" value="false" />
   </component>
 </project>
