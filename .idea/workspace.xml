@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="349e8d1a-d7b3-4969-8dcf-ff7d1a837524" name="Changes" comment="refactored imports" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2dm0k3bCZ6tM5xZYkeIcF5qJg7s" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.cli.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/janne/Documents/Code/sheepy-cli&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.koxudaxi.ruff.RuffConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\janne\Documents\Code\sheepy-cli" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="cli" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="sheepy-cli" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/sheepy/util" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/sheepy/util/cli.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.cli" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-d68999036c7f-b11f5e8da5ad-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.14475.56" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="349e8d1a-d7b3-4969-8dcf-ff7d1a837524" name="Changes" comment="" />
+      <created>1710598087418</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1710598087418</updated>
+      <workItem from="1710598088741" duration="154000" />
+      <workItem from="1710598250332" duration="813000" />
+      <workItem from="1710599464767" duration="703000" />
+      <workItem from="1710701350927" duration="409000" />
+      <workItem from="1710702646786" duration="38000" />
+      <workItem from="1710702719924" duration="128000" />
+      <workItem from="1710713903946" duration="26000" />
+      <workItem from="1710769296137" duration="11261000" />
+      <workItem from="1710817075639" duration="414000" />
+      <workItem from="1710865094686" duration="2042000" />
+    </task>
+    <task id="LOCAL-00001" summary="gitignore update">
+      <option name="closed" value="true" />
+      <created>1710769322858</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1710769322858</updated>
+    </task>
+    <task id="LOCAL-00002" summary="pycharm files">
+      <option name="closed" value="true" />
+      <created>1710769346501</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1710769346501</updated>
+    </task>
+    <task id="LOCAL-00003" summary="TODO: Tests">
+      <option name="closed" value="true" />
+      <created>1710769383904</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1710769383904</updated>
+    </task>
+    <task id="LOCAL-00004" summary="gitignore update">
+      <option name="closed" value="true" />
+      <created>1710865119004</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1710865119004</updated>
+    </task>
+    <task id="LOCAL-00005" summary="rewrote cli to include subcommands">
+      <option name="closed" value="true" />
+      <created>1710865143744</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1710865143744</updated>
+    </task>
+    <task id="LOCAL-00006" summary="adjusted program logic for new cli">
+      <option name="closed" value="true" />
+      <created>1710865166884</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1710865166884</updated>
+    </task>
+    <task id="LOCAL-00007" summary="extended formatting">
+      <option name="closed" value="true" />
+      <created>1710865191758</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1710865191758</updated>
+    </task>
+    <task id="LOCAL-00008" summary="extended formatting">
+      <option name="closed" value="true" />
+      <created>1710865228037</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1710865228037</updated>
+    </task>
+    <task id="LOCAL-00009" summary="adjusted return types">
+      <option name="closed" value="true" />
+      <created>1710865282236</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1710865282236</updated>
+    </task>
+    <task id="LOCAL-00010" summary="fixed wrong sequence of letters&#10;added plot column">
+      <option name="closed" value="true" />
+      <created>1710865310866</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1710865310866</updated>
+    </task>
+    <task id="LOCAL-00011" summary="refactored imports">
+      <option name="closed" value="true" />
+      <created>1710876085443</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1710876085443</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="pycharm files" />
+    <MESSAGE value="TODO: Tests" />
+    <MESSAGE value="gitignore update" />
+    <MESSAGE value="rewrote cli to include subcommands" />
+    <MESSAGE value="adjusted program logic for new cli" />
+    <MESSAGE value="extended formatting" />
+    <MESSAGE value="adjusted return types" />
+    <MESSAGE value="fixed wrong sequence of letters&#10;added plot column" />
+    <MESSAGE value="refactored imports" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactored imports" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/sheepy_cli$cli.coverage" NAME="cli Coverage Results" MODIFIED="1710771936865" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/sheepy/util" />
+  </component>
+</project>
