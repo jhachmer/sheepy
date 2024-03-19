@@ -1,6 +1,3 @@
-from sheepy import SheepySpreadsheet
-from sheepy.core import get_env_spreadsheet, process_movie_request
-from sheepy.spreadsheet.formatting import setup_sheet_formatting
 from sheepy.util.cli import read_user_cli_args
 from sheepy.util.logger import get_logger
 
@@ -12,19 +9,22 @@ def main() -> None:
     logger = get_logger(__name__)
     logger.info("Entry")
     args = read_user_cli_args()
-    logger.debug(args)
-    movie_info: dict = process_movie_request(
-        imdb_id=args.imdb_id[0], watched=args.watched, add=args.add
-    )
+    logger.info(args)
+
+    """
     sheepy_sheet: SheepySpreadsheet = get_env_spreadsheet()
-    setup_sheet_formatting(sheepy_sheet)
-    sheepy_sheet.add_values_to_sheet(movie_info)
+    setup_columns(sheepy_sheet)
+    movie_info: dict = add_movie_to_sheet(
+        ss=sheepy_sheet, imdb_id=args.imdb_id[0], watched=args.watched, add=args.add
+    )
     logger.info(
-        f"\n{'#'*40}\n"
+        f"\n{'#'*60}\n"
         f"Added Movie Info: {movie_info}\n"
         f"to Spreadsheet:\n{sheepy_sheet}\n"
-        f"{'#'*40}"
+        f"{'#'*60}\n"
     )
+    """
+    args.func(args)
 
 
 if __name__ == "__main__":

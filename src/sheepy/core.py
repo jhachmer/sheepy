@@ -1,19 +1,27 @@
-from sheepy import SheepySpreadsheet, process_movie_request
+from sheepy.omdbapi.omdb import process_movie_request, show_info
+from sheepy.spreadsheet.spreadsheet import SheepySpreadsheet
 
 
 def add_movie_to_sheet(
-    ss: SheepySpreadsheet, imdb_id: str, watched: bool = False, add: bool = True
-):
+    ss: SheepySpreadsheet,
+    imdb_id: str,
+    watched: bool = False,
+) -> dict[str, str]:
     """
     Add a movie to a Spreadsheet
     Args:
         ss (SheepySpreadsheet): SheepySpreadsheet instance
         imdb_id (str): IMDB ID of movie
         watched (bool, optional): Whether to tick watched checkbox
-        add (bool, optional): Whether to add a movie or show info in cli (NYI)
     """
-    insert_data: dict[str, str] = process_movie_request(imdb_id, watched, add)
+    insert_data: dict[str, str] = process_movie_request(imdb_id, watched, True)
     ss.add_values_to_sheet(insert_data)
+    return insert_data
+
+
+def view_movie_info(imdb_id: str):
+    view_data: dict[str, str] = process_movie_request(imdb_id, False, False)
+    show_info(view_data)
 
 
 def get_spreadsheet(ss_id: str, ws_idx: str) -> SheepySpreadsheet:
@@ -43,6 +51,22 @@ def create_new_sheet(email: str) -> SheepySpreadsheet:
         f"Created new sheet\nSpreadsheet ID: {ss.spreadsheet_id}\n"
         f"Worksheet Index: {ss.worksheet_index}"
     )
+    ss.logger.warning(
+        "Make Sure to fill out remaining fields in .env file. After filling out rename to '.env'"
+    )
+    with open("new.env", "x") as env_file:
+        env_file.write(
+            "# OMDB API KEY\n"
+            'OMDB_API_KEY="Your_API_Key"\n'
+            "# GOOGLE SHEETS ID\n"
+            "# LONG STRING IN THE URL AFTER /d/ AND BEFORE /edit\n"
+            f'SPREADSHEET_ID="{ss.spreadsheet_id}"\n'
+            "\n"
+            f'WORKSHEET_INDEX="{ss.worksheet_index}"\n'
+            "\n"
+            "# ENTER YOUR NAME HERE :)\n"
+            'SUGGESTED_BY="Your_Name"\n'
+        )
     ss.share_spreadsheet(email, "user", "writer")
     return ss
 
@@ -54,10 +78,3 @@ def get_env_spreadsheet() -> SheepySpreadsheet:
         SheepySpreadsheet: Spreadsheet instance
     """
     return SheepySpreadsheet.from_env_file()
-
-
-if __name__ == "__main__":
-    ss_test: SheepySpreadsheet = get_spreadsheet(
-        "10cl4nHYqSc1Yk9M4c7gA5OF2aUX8IdN26ViBot76vA0", "0"
-    )
-    add_movie_to_sheet(ss_test, "tt15239678", watched=True, add=True)
