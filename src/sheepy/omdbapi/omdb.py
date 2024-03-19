@@ -91,6 +91,11 @@ def show_info(movie_data: dict) -> None:
     Args:
         movie_data (dict): A dictionary containing the movie information.
     """
+    try:
+        del movie_data["watched"]
+        del movie_data["poster"]
+    except KeyError:
+        omdb_logger.error("Unable to delete keys from movie dict")
     table = [list(movie_data.keys()), list(movie_data.values())]
     print(
         tabulate(
@@ -103,9 +108,7 @@ def show_info(movie_data: dict) -> None:
     )
 
 
-def _extract_movie_data(
-    movie_data: dict[str, Any], watched: bool, add: bool
-) -> dict[str, str]:
+def _extract_movie_data(movie_data: dict[str, Any], watched: bool, add: bool) -> Movie:
     """Extract only the necessary data from the movie_data dictionary.
 
     Args:
@@ -114,7 +117,7 @@ def _extract_movie_data(
         add (bool): Set to true when adding to spreadsheet
 
     Returns:
-        dict: A new dictionary with only the necessary data.
+        Movie: The movie data
     """
     movie: Movie = Movie(
         watched="TRUE" if watched else "FALSE",
@@ -137,7 +140,7 @@ def _extract_movie_data(
             else insert_newlines(movie_data.get("Poster", ""), 30)
         ),
     )
-    return asdict(movie)
+    return movie
 
 
 def _extract_tomatometer(ratings: list) -> str:
@@ -174,5 +177,6 @@ def process_movie_request(
     Returns:
         dict: Dictionary containing movie data
     """
-    movie_info: dict = _get_movie_data(imdb_id)
-    return _extract_movie_data(movie_info, watched, add)
+    raw_movie_info: dict = _get_movie_data(imdb_id)
+    extr_movie_data = _extract_movie_data(raw_movie_info, watched, add)
+    return asdict(extr_movie_data)
