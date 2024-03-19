@@ -92,7 +92,6 @@ def setup_sheet_text_and_color(ss: "SheepySpreadsheet") -> None:
         textFormat=TextFormat(foregroundColor=SHEET_TEXT_COLOR),
         horizontalAlignment="CENTER",
     )
-    # TODO: Black/Gray Alternating Background
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
     batch.format_cell_range(ss.worksheet, "A", fmt_odd)
     batch.format_cell_range(ss.worksheet, "B", fmt_even)
