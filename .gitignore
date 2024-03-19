@@ -2,6 +2,8 @@
 client_secret_*.json
 token*.pickle
 
+new.env
+
 #virtual environment
 sheepy-venv/
 
