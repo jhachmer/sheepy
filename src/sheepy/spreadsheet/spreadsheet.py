@@ -9,7 +9,12 @@ from requests import Response
 
 from sheepy.util.logger import get_logger
 
-from .formatting import check_headers, setup_checkboxes, setup_sheet_formatting
+from .formatting import (
+    check_headers,
+    set_insert_row_height,
+    setup_checkboxes,
+    setup_sheet_formatting,
+)
 
 
 class SheepySpreadsheet:
@@ -66,7 +71,7 @@ class SheepySpreadsheet:
 
     @classmethod
     def from_env_file(cls) -> Self:
-        """Instantiate SheepySpreadsheet from env config
+        """Instantiate SheepySpreadsheet from environment variable config
 
         Raises:
             ValueError: Raises Exception if environment variables are not set
@@ -222,6 +227,14 @@ class SheepySpreadsheet:
         return len(row_list) + 1
 
     def add_values_to_sheet(self, movie_dict: dict) -> None:
+        """_summary_
+
+        Args:
+            movie_dict (dict): _description_
+
+        Raises:
+            ValueError: _description_
+        """
         if self.worksheet is None:
             raise ValueError("Select a worksheet first")
         insert_row: int = self.find_free_row()
@@ -230,6 +243,7 @@ class SheepySpreadsheet:
         self.logger.info("A1-Notation %s", a1_notation)
         self.logger.info("%s", values)
         setup_checkboxes(ss=self, cell=f"A{insert_row}")
+        set_insert_row_height(ss=self, row=insert_row)
         self.worksheet.update(
             range_name=a1_notation,
             values=values,
