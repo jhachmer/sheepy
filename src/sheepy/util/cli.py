@@ -1,6 +1,12 @@
 import argparse
 
-from sheepy.core import create_new_sheet, view_movie_info
+from sheepy.core import (
+    add_movie_to_sheet,
+    create_new_sheet,
+    get_env_spreadsheet,
+    view_movie_info,
+)
+from sheepy.spreadsheet.spreadsheet import SheepySpreadsheet
 
 
 def read_user_cli_args() -> argparse.Namespace:
@@ -53,4 +59,5 @@ def cli_view_movie(args: argparse.Namespace) -> None:
 
 
 def cli_add_movie(args: argparse.Namespace) -> None:
-    print(args)
+    ss: SheepySpreadsheet = get_env_spreadsheet()
+    add_movie_to_sheet(ss=ss, imdb_id=args.imdb_id[0], watched=args.watched)
