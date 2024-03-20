@@ -6,7 +6,7 @@ def add_movie_to_sheet(
     ss: SheepySpreadsheet,
     imdb_id: str,
     watched: bool = False,
-) -> dict[str, str]:
+):
     """
     Add a movie to a Spreadsheet
     Args:
@@ -16,7 +16,6 @@ def add_movie_to_sheet(
     """
     insert_data: dict[str, str] = process_movie_request(imdb_id, watched, True)
     ss.add_values_to_sheet(insert_data)
-    return insert_data
 
 
 def view_movie_info(imdb_id: str):
@@ -51,8 +50,9 @@ def create_new_sheet(email: str) -> SheepySpreadsheet:
         f"Created new sheet\nSpreadsheet ID: {ss.spreadsheet_id}\n"
         f"Worksheet Index: {ss.worksheet_index}"
     )
-    ss.logger.warning(
-        "Make Sure to fill out remaining fields in .env file. After filling out rename to '.env'"
+    ss.logger.info(
+        "Make Sure to fill out remaining fields in .env file."
+        " After filling out rename to '.env'"
     )
     with open("new.env", "x") as env_file:
         env_file.write(

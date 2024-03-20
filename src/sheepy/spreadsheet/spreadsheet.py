@@ -1,7 +1,7 @@
 """Spreadsheet Module"""
 
 import os
-from typing import Self
+from typing import Any, Self
 
 import gspread
 from gspread.utils import ValueInputOption, rowcol_to_a1
@@ -146,7 +146,7 @@ class SheepySpreadsheet:
                 "spreadsheet_id is None. Call set_instance_variables first"
             )
         perms: list = self.spreadsheet.list_permissions()
-        perm_id = None
+        perm_id: Any = None
         for d in perms:
             if d["emailAddress"] == email:
                 perm_id = d["id"]
@@ -239,13 +239,19 @@ class SheepySpreadsheet:
             raise ValueError("Select a worksheet first")
         insert_row: int = self.find_free_row()
         a1_notation: str = rowcol_to_a1(insert_row, 1)
-        values: list = [list(movie_dict.values())]
-        self.logger.info("A1-Notation %s", a1_notation)
-        self.logger.info("%s", values)
+        values: list[list[str]] = [list(movie_dict.values())]
+        self.logger.debug("A1-Notation %s", a1_notation)
+        self.logger.debug("%s", values)
         setup_checkboxes(ss=self, cell=f"A{insert_row}")
         set_insert_row_height(ss=self, row=insert_row)
         self.worksheet.update(
             range_name=a1_notation,
             values=values,
             value_input_option=ValueInputOption.user_entered,
+        )
+        self.logger.info(
+            f"\n{'#' * 60}\n"
+            f"Added Movie Info: {movie_dict}\n"
+            f"to Spreadsheet:\n{self}\n"
+            f"{'#' * 60}\n"
         )

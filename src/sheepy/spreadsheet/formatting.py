@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import gspread
 from gspread.utils import ValueInputOption
@@ -39,6 +39,10 @@ if TYPE_CHECKING:
 
 
 def setup_sheet_formatting(ss: "SheepySpreadsheet") -> None:
+    """
+    Setup sheet formatting
+    Calling other functions to set up individual parts
+    """
     check_headers(ss)
     setup_sheet_text_and_color(ss)
     header_format(ss)
@@ -47,6 +51,7 @@ def setup_sheet_formatting(ss: "SheepySpreadsheet") -> None:
 
 def setup_headers(ss: "SheepySpreadsheet") -> None:
     """Sets up Sheet Headers, defined in class constant HEADERS
+
     Raises:
         ValueError: Raises Exception if no worksheet is selected
     """
@@ -63,12 +68,13 @@ def setup_headers(ss: "SheepySpreadsheet") -> None:
 
 def check_headers(ss: "SheepySpreadsheet") -> None:
     """Checks if Sheet has correct headers
+
     Raises:
         ValueError: Raises Exception if no worksheet is selected
     """
     if ss.worksheet is None:
         raise ValueError("Select a worksheet first")
-    values_list = ss.worksheet.row_values(1)
+    values_list: list[Any] = ss.worksheet.row_values(1)
     if COLUMNS != values_list:
         ss.logger.info("Headers need updating")
         setup_headers(ss)
@@ -82,12 +88,12 @@ def setup_sheet_text_and_color(ss: "SheepySpreadsheet") -> None:
     Args:
         ss (SheepySpreadsheet): Spreadsheet object
     """
-    fmt_odd = CellFormat(
+    fmt_odd: CellFormat = CellFormat(
         backgroundColor=SHEET_BACKGROUND_COLOR_ODD,
         textFormat=TextFormat(foregroundColor=SHEET_TEXT_COLOR),
         horizontalAlignment="CENTER",
     )
-    fmt_even = CellFormat(
+    fmt_even: CellFormat = CellFormat(
         backgroundColor=SHEET_BACKGROUND_COLOR_EVEN,
         textFormat=TextFormat(foregroundColor=SHEET_TEXT_COLOR),
         horizontalAlignment="CENTER",
@@ -114,7 +120,7 @@ def header_format(ss: "SheepySpreadsheet") -> None:
     Args:
         ss (SheepySpreadsheet): Spreadsheet object
     """
-    fmt = CellFormat(
+    fmt: CellFormat = CellFormat(
         textFormat=TextFormat(bold=True),
         horizontalAlignment="CENTER",
     )
@@ -129,8 +135,8 @@ def setup_checkboxes(
     Sets up Checkboxes for watched value
     Args:
         ss (SheepySpreadsheet): Spreadsheet object
-        cell: Cell to put Checkbox
-        validation: DataValidation rule (Default value = None)
+        cell (str): Cell to put Checkbox
+        validation (DataValidationRule): DataValidation rule (Default value = None)
     """
     if validation is None:
         validation = DataValidationRule(
@@ -140,12 +146,27 @@ def setup_checkboxes(
 
 
 def _freeze_header_row(ss: "SheepySpreadsheet", row: int = 1) -> None:
+    """
+    Freezes header row
+    (stays fixed to top when scrolling)
+
+    Args:
+        ss (SheepySpreadsheet): Spreadsheet object
+        row (int, optional): Row number to freeze. Defaults to 1
+    """
     set_frozen(ss.worksheet, rows=row)
 
 
 def set_insert_row_height(ss: "SheepySpreadsheet", row: int) -> None:
+    """
+    Sets row height for given row
+
+    Args:
+        ss (SheepySpreadsheet): Spreadsheet object
+        row (int, optional): Row number
+    """
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
-    ws = ss.worksheet
+    ws: gspread.Worksheet = ss.worksheet
     # Set height of row
     batch.set_row_height(ws, f"{row}", SHEET_ROW_HEIGHT)
     batch.execute()
@@ -153,6 +174,11 @@ def set_insert_row_height(ss: "SheepySpreadsheet", row: int) -> None:
 
 # noinspection PyTestUnpassedFixture
 def setup_columns(ss: "SheepySpreadsheet") -> None:
+    """
+    Sets column widths for columns used for values
+    Args:
+        ss (SheepySpreadsheet): Spreadsheet object
+    """
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
     cf: CellFormat = CellFormat(wrapStrategy="WRAP", verticalAlignment="MIDDLE")
     ws: gspread.Worksheet = ss.worksheet

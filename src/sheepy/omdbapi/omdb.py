@@ -58,7 +58,7 @@ def _get_movie_data(imdb_id: str) -> dict:
     try:
         response: Response = requests.get(URL + API_KEY + "&i=" + imdb_id, timeout=60)
         response.raise_for_status()
-        response_json: dict = response.json()
+        response_json: dict[str, str] = response.json()
     except requests.exceptions.HTTPError as he:
         omdb_logger.error("HTTP Error Code: - %s", str(he))
         raise SystemExit(f"HTTP Error Code: - {str(he)}") from he
@@ -79,13 +79,15 @@ def _get_movie_data(imdb_id: str) -> dict:
         raise SystemExit(f"{response_json['Error']} - Invalid IMDb ID.")
 
     omdb_logger.info(
-        "Successfully retrieved movie data for %s.", response_json["Title"]
+        "Successfully retrieved movie data for %s with IMDb-ID %s.",
+        response_json["Title"],
+        response_json["imdbID"],
     )
 
     return response_json
 
 
-def show_info(movie_data: dict) -> None:
+def show_info(movie_data: dict[str, str]) -> None:
     """Show the movie information in the CLI.
 
     Args:
@@ -96,7 +98,7 @@ def show_info(movie_data: dict) -> None:
         del movie_data["poster"]
     except KeyError:
         omdb_logger.error("Unable to delete keys from movie dict")
-    table = [list(movie_data.keys()), list(movie_data.values())]
+    table: list[list[str]] = [list(movie_data.keys()), list(movie_data.values())]
     print(
         tabulate(
             table,
