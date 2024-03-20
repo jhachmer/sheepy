@@ -4,7 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="349e8d1a-d7b3-4969-8dcf-ff7d1a837524" name="Changes" comment="refactored imports" />
+    <list default="true" id="349e8d1a-d7b3-4969-8dcf-ff7d1a837524" name="Changes" comment="pycharm">
+      <change beforePath="$PROJECT_DIR$/.idea/ruff.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ruff.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sheepy-cli.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sheepy-cli.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sheepy/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/sheepy/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sheepy/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/sheepy/core.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sheepy/omdbapi/omdb.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/sheepy/omdbapi/omdb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sheepy/spreadsheet/formatting.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/sheepy/spreadsheet/formatting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sheepy/spreadsheet/spreadsheet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/sheepy/spreadsheet/spreadsheet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sheepy/util/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/sheepy/util/cli.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,57 +37,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.cli.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/janne/Documents/Code/sheepy-cli&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.koxudaxi.ruff.RuffConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.cli.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/janne/Documents/Code/sheepy-cli",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "actions.on.save",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\janne\Documents\Code\sheepy-cli" />
     </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="cli" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="sheepy-cli" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/sheepy/util" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/sheepy/util/cli.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Python.cli" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -103,7 +83,7 @@
       <workItem from="1710713903946" duration="26000" />
       <workItem from="1710769296137" duration="11261000" />
       <workItem from="1710817075639" duration="414000" />
-      <workItem from="1710865094686" duration="2042000" />
+      <workItem from="1710865094686" duration="10965000" />
     </task>
     <task id="LOCAL-00001" summary="gitignore update">
       <option name="closed" value="true" />
@@ -193,7 +173,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710876085443</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="pycharm">
+      <option name="closed" value="true" />
+      <created>1710876122195</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1710876122195</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -209,7 +197,8 @@
     <MESSAGE value="adjusted return types" />
     <MESSAGE value="fixed wrong sequence of letters&#10;added plot column" />
     <MESSAGE value="refactored imports" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactored imports" />
+    <MESSAGE value="pycharm" />
+    <option name="LAST_COMMIT_MESSAGE" value="pycharm" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/sheepy_cli$cli.coverage" NAME="cli Coverage Results" MODIFIED="1710771936865" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/sheepy/util" />
