@@ -1,38 +1,70 @@
 # sheepy
-![Overview](/readme_assests/overview.jpg "Overview")
+![Overview](/readme_assests/overview.png "Overview")
 
 # Requirements
-- Python 3.XX
-- [Poetry](https://python-poetry.org/)
+- Python 3.12 (maybe lower versions also work)
 - Google Account
 
 # Setup
 1. Get your API key from [OMDb](https://www.omdbapi.com/)
-2. Follow the instructions following **Create a new Google Cloud Project** [here](https://pypi.org/project/EZSheets/) and place your credentials file in the parent folder
-
+2. Follow the instructions under **Enable API Access for a Project** and **For Bots: Using Service Account** [here](https://docs.gspread.org/en/latest/oauth2.html) to set up Google API access
 3. Create .env file and put in your information (see example.env)
-4. The script will automatically create a spreadsheet if no ID was provided.\
-    If you already created a spreadsheet you can pass its ID and a sheet will be setup.
-5. Run following commands
+4. Run following commands
     ```sh
-    # make sure you are in the projects parent dir
+    # make sure you are in the projects root folder
     # install dependencies
-    poetry install
+    pip install .
+    # to install dev dependencies
+    pip install .[dev] 
     # run program
-    poetry run python .\sheepy\core.py [-h] (-a | -v) [-w] imdb_id
-    # see below for more detail
+    # (see below for more options)
+    python -m sheepy -h
     ```
 
 # Usage
-usage: core.py [-h] (-a | -v) [-w] imdb_id
+### General
+```sh
+usage: sheepy \[-h] {new,view,add} ...
 
 Add or view movies to your personal database.
 
-positional arguments:\
-  imdb_id        Enter the movies imdb id.
+options:
+  -h, --help      show this help message and exit
 
-options:\
--h, --help     show this help message and exit\
--a, --add      Set to add to sheet (This or -v/--view is required)\
--v, --view     Set to view in the CLI (This or -a/--add is required) \
--w, --watched  Set to mark movie as already watched (Defaults to False) 
+subcommands:
+  {new,view,add}  Commands offered by sheepy
+    new           Create a new sheet
+    view          View Movie Info
+    add           Add Movie to Sheet
+```
+### Adding
+```sh
+usage: sheepy add \[-h] \[-w] imdb_id
+
+positional arguments:
+  imdb_id        Enter the movies imdb id to add.
+
+options:
+  -h, --help     show this help message and exit
+  -w, --watched  Set to mark movie as already watched (Defaults to False)
+```
+### Viewing
+```sh
+usage: sheepy view [-h] imdb_id
+
+positional arguments:
+  imdb_id     Enter the movies imdb id to view.
+
+options:
+  -h, --help  show this help message and exit
+```
+### Creating new sheet
+```sh
+usage: sheepy new [-h] email
+
+positional arguments:
+  email       Enter E-Mail Address of Google Account.
+
+options:
+  -h, --help  show this help message and exit
+```
