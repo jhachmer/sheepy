@@ -7,7 +7,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "sheepy"
-version = "0.0.1"
+version = "0.0.4"
 authors = [{ name = "Jannes Hachmer", email = "jannes.hachmer@gmail.com" }]
 description = "add movies to your google spreadsheet"
 readme = "README.md"
@@ -26,6 +26,8 @@ dev = [
     "ruff",
     "mypy",
     "pytest",
+    "sphinx",
+    "flit",
 ]
 
 
