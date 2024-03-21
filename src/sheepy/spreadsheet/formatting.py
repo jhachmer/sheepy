@@ -42,6 +42,9 @@ def setup_sheet_formatting(ss: "SheepySpreadsheet") -> None:
     """
     Setup sheet formatting
     Calling other functions to set up individual parts
+
+    Args:
+        ss (SheepySpreadsheet): Spreadsheet object
     """
     check_headers(ss)
     setup_sheet_text_and_color(ss)
@@ -51,6 +54,9 @@ def setup_sheet_formatting(ss: "SheepySpreadsheet") -> None:
 
 def setup_headers(ss: "SheepySpreadsheet") -> None:
     """Sets up Sheet Headers, defined in class constant HEADERS
+
+    Args:
+        ss (SheepySpreadsheet): Spreadsheet object
 
     Raises:
         ValueError: Raises Exception if no worksheet is selected
@@ -68,6 +74,9 @@ def setup_headers(ss: "SheepySpreadsheet") -> None:
 
 def check_headers(ss: "SheepySpreadsheet") -> None:
     """Checks if Sheet has correct headers
+
+    Args:
+        ss (SheepySpreadsheet): Spreadsheet object
 
     Raises:
         ValueError: Raises Exception if no worksheet is selected
@@ -117,6 +126,7 @@ def setup_sheet_text_and_color(ss: "SheepySpreadsheet") -> None:
 def header_format(ss: "SheepySpreadsheet") -> None:
     """
     Sets up Header Row (Row 1)
+
     Args:
         ss (SheepySpreadsheet): Spreadsheet object
     """
@@ -133,6 +143,7 @@ def setup_checkboxes(
 ) -> None:
     """
     Sets up Checkboxes for watched value
+
     Args:
         ss (SheepySpreadsheet): Spreadsheet object
         cell (str): Cell to put Checkbox
@@ -176,6 +187,7 @@ def set_insert_row_height(ss: "SheepySpreadsheet", row: int) -> None:
 def setup_columns(ss: "SheepySpreadsheet") -> None:
     """
     Sets column widths for columns used for values
+
     Args:
         ss (SheepySpreadsheet): Spreadsheet object
     """

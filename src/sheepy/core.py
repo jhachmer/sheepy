@@ -6,9 +6,10 @@ def add_movie_to_sheet(
     ss: SheepySpreadsheet,
     imdb_id: str,
     watched: bool = False,
-):
+) -> None:
     """
     Add a movie to a Spreadsheet
+
     Args:
         ss (SheepySpreadsheet): SheepySpreadsheet instance
         imdb_id (str): IMDB ID of movie
@@ -18,7 +19,13 @@ def add_movie_to_sheet(
     ss.add_values_to_sheet(insert_data)
 
 
-def view_movie_info(imdb_id: str):
+def view_movie_info(imdb_id: str) -> None:
+    """
+    Displays movie information in a table
+
+    Args:
+        imdb_id: IMDB ID of movie
+    """
     view_data: dict[str, str] = process_movie_request(imdb_id, False, False)
     show_info(view_data)
 
@@ -26,6 +33,7 @@ def view_movie_info(imdb_id: str):
 def get_spreadsheet(ss_id: str, ws_idx: str) -> SheepySpreadsheet:
     """
     Get a Spreadsheet by id
+
     Args:
         ss_id (str): Spreadsheet ID. Taken from URL
         ws_idx (str): Index of worksheet in spreadsheet
@@ -39,6 +47,7 @@ def get_spreadsheet(ss_id: str, ws_idx: str) -> SheepySpreadsheet:
 def create_new_sheet(email: str) -> SheepySpreadsheet:
     """
     Create a new Spreadsheet
+
     Args:
         email (str): Email to share spreadsheet with
 
@@ -74,6 +83,7 @@ def create_new_sheet(email: str) -> SheepySpreadsheet:
 def get_env_spreadsheet() -> SheepySpreadsheet:
     """
     Get a Spreadsheet from env-file config
+
     Returns:
         SheepySpreadsheet: Spreadsheet instance
     """

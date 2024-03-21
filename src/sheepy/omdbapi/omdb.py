@@ -5,14 +5,11 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 import requests
-from dotenv import load_dotenv
 from requests import Response
 from tabulate import tabulate
 
 from sheepy.util.logger import get_logger
 from sheepy.util.string_util import insert_newlines
-
-load_dotenv()
 
 URL = "http://www.omdbapi.com/?apikey="
 API_KEY = os.environ.get("OMDB_API_KEY", "")
@@ -26,7 +23,10 @@ omdb_logger = get_logger(__name__)
 
 @dataclass
 class Movie:
-    """Represents movie from OMDb API."""
+    """
+    Represents movie from OMDb API.
+    Only relevant fields are saved.
+    """
 
     watched: str
     title: str

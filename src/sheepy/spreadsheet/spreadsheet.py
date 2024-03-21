@@ -4,6 +4,7 @@ import os
 from typing import Any, Self
 
 import gspread
+from dotenv import load_dotenv
 from gspread.utils import ValueInputOption, rowcol_to_a1
 from requests import Response
 

@@ -51,13 +51,31 @@ def read_user_cli_args() -> argparse.Namespace:
 
 
 def cli_new_sheet(args: argparse.Namespace) -> None:
+    """
+    Creates a new sheet when new command is used
+
+    Args:
+        args (argparse.Namespace): Arguments parsed from command line
+    """
     create_new_sheet(args.email[0])
 
 
 def cli_view_movie(args: argparse.Namespace) -> None:
+    """
+    Displays movie information when view command is used
+
+    Args:
+        args (argparse.Namespace): Arguments parsed from command line
+    """
     view_movie_info(args.imdb_id[0])
 
 
 def cli_add_movie(args: argparse.Namespace) -> None:
+    """
+    Adds movie to sheet when add command is used
+
+    Args:
+        args (argparse.Namespace): Arguments parsed from command line
+    """
     ss: SheepySpreadsheet = get_env_spreadsheet()
     add_movie_to_sheet(ss=ss, imdb_id=args.imdb_id[0], watched=args.watched)

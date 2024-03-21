@@ -1,4 +1,4 @@
-"""Utility Constants"""
+"""Utility Constants for row, column colors, widths and heights etc."""
 
 from gspread_formatting import Color
 
