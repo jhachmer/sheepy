@@ -2,7 +2,6 @@
 
 import os
 from dataclasses import asdict, dataclass
-from typing import Any
 
 import requests
 from requests import Response
@@ -110,7 +109,7 @@ def show_info(movie_data: dict[str, str]) -> None:
     )
 
 
-def _extract_movie_data(movie_data: dict[str, Any], watched: bool, add: bool) -> Movie:
+def _extract_movie_data(movie_data: dict[str, str], watched: bool, add: bool) -> Movie:
     """Extract only the necessary data from the movie_data dictionary.
 
     Args:
@@ -179,6 +178,6 @@ def process_movie_request(
     Returns:
         dict: Dictionary containing movie data
     """
-    raw_movie_info: dict = _get_movie_data(imdb_id)
+    raw_movie_info: dict[str, str] = _get_movie_data(imdb_id)
     extr_movie_data = _extract_movie_data(raw_movie_info, watched, add)
     return asdict(extr_movie_data)
