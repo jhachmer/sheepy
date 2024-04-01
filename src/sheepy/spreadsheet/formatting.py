@@ -182,7 +182,8 @@ def setup_columns(ss: "SheepySpreadsheet") -> None:
     ws: gspread.Worksheet = ss.worksheet
 
     for format_tuple in COLUMN_WIDTHS:
-        batch.set_column_width(ws, **format_tuple)
+        # col, width = format_tuple
+        batch.set_column_width(ws, *format_tuple)
 
     batch.format_cell_range(ws, SHEET_PLOT_COL, cf)
     batch.execute()
