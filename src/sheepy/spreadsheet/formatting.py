@@ -14,20 +14,10 @@ from gspread_formatting import (
 )
 
 from .sheet_util import (
+    COLUMN_WIDTHS,
     COLUMNS,
     SHEET_BACKGROUND_COLOR_EVEN,
     SHEET_BACKGROUND_COLOR_ODD,
-    SHEET_COL_A_WIDTH,
-    SHEET_COL_B_WIDTH,
-    SHEET_COL_C_WIDTH,
-    SHEET_COL_D_WIDTH,
-    SHEET_COL_E_WIDTH,
-    SHEET_COL_F_WIDTH,
-    SHEET_COL_G_WIDTH,
-    SHEET_COL_H_WIDTH,
-    SHEET_COL_I_WIDTH,
-    SHEET_COL_J_WIDTH,
-    SHEET_COL_K_WIDTH,
     SHEET_HEADER_RANGE,
     SHEET_PLOT_COL,
     SHEET_ROW_HEIGHT,
@@ -101,27 +91,21 @@ def setup_sheet_text_and_color(ss: "SheepySpreadsheet") -> None:
         backgroundColor=SHEET_BACKGROUND_COLOR_ODD,
         textFormat=TextFormat(foregroundColor=SHEET_TEXT_COLOR),
         horizontalAlignment="CENTER",
-        verticalAlignment="MIDDLE"
+        verticalAlignment="MIDDLE",
     )
     fmt_even: CellFormat = CellFormat(
         backgroundColor=SHEET_BACKGROUND_COLOR_EVEN,
         textFormat=TextFormat(foregroundColor=SHEET_TEXT_COLOR),
         horizontalAlignment="CENTER",
-        verticalAlignment="MIDDLE"
+        verticalAlignment="MIDDLE",
     )
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
-    batch.format_cell_range(ss.worksheet, "A", fmt_odd)
-    batch.format_cell_range(ss.worksheet, "B", fmt_even)
-    batch.format_cell_range(ss.worksheet, "C", fmt_odd)
-    batch.format_cell_range(ss.worksheet, "D", fmt_even)
-    batch.format_cell_range(ss.worksheet, "E", fmt_odd)
-    batch.format_cell_range(ss.worksheet, "F", fmt_even)
-    batch.format_cell_range(ss.worksheet, "G", fmt_odd)
-    batch.format_cell_range(ss.worksheet, "H", fmt_even)
-    batch.format_cell_range(ss.worksheet, "I", fmt_odd)
-    batch.format_cell_range(ss.worksheet, "J", fmt_even)
-    batch.format_cell_range(ss.worksheet, "K", fmt_odd)
-    batch.format_cell_range(ss.worksheet, "L", fmt_even)
+    # convert ascii numbers to column names
+    for i in range(65, 77):
+        if (i % 2) == 1:
+            batch.format_cell_range(ss.worksheet, chr(i), fmt_odd)
+        else:
+            batch.format_cell_range(ss.worksheet, chr(i), fmt_even)
     batch.execute()
 
 
@@ -196,16 +180,9 @@ def setup_columns(ss: "SheepySpreadsheet") -> None:
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
     cf: CellFormat = CellFormat(wrapStrategy="WRAP", verticalAlignment="MIDDLE")
     ws: gspread.Worksheet = ss.worksheet
-    batch.set_column_width(ws, *SHEET_COL_A_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_B_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_C_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_D_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_E_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_F_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_G_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_H_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_I_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_J_WIDTH)
-    batch.set_column_width(ws, *SHEET_COL_K_WIDTH)
+
+    for format_tuple in COLUMN_WIDTHS:
+        batch.set_column_width(ws, **format_tuple)
+
     batch.format_cell_range(ws, SHEET_PLOT_COL, cf)
     batch.execute()
