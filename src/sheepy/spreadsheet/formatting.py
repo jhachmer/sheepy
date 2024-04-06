@@ -27,6 +27,9 @@ from .sheet_util import (
 if TYPE_CHECKING:
     from .spreadsheet import SheepySpreadsheet
 
+# TODO: Title, Genre, Plot left-alligned
+# TODO: Custom Image width/height
+
 
 def setup_sheet_formatting(ss: "SheepySpreadsheet") -> None:
     """
