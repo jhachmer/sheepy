@@ -106,9 +106,9 @@ def setup_sheet_text_and_color(ss: "SheepySpreadsheet") -> None:
     # convert ascii numbers to column names
     for i in range(65, 77):
         if (i % 2) == 1:
-            batch.format_cell_range(ss.worksheet, chr(i), fmt_odd)
+            batch.format_cell_range(ss.worksheet, chr(i), fmt_odd)  # type: ignore
         else:
-            batch.format_cell_range(ss.worksheet, chr(i), fmt_even)
+            batch.format_cell_range(ss.worksheet, chr(i), fmt_even)  # type: ignore
     batch.execute()
 
 
@@ -128,7 +128,8 @@ def header_format(ss: "SheepySpreadsheet") -> None:
 
 
 def setup_checkboxes(
-    ss: "SheepySpreadsheet", cell: str, validation: DataValidationRule = None
+    ss: "SheepySpreadsheet",
+    cell: str,
 ) -> None:
     """
     Sets up Checkboxes for watched value
@@ -138,10 +139,9 @@ def setup_checkboxes(
         cell (str): Cell to put Checkbox
         validation (DataValidationRule): DataValidation rule (Default value = None)
     """
-    if validation is None:
-        validation = DataValidationRule(
-            BooleanCondition("BOOLEAN", ["True", "False"]), showCustomUi=True
-        )
+    validation = DataValidationRule(
+        BooleanCondition("BOOLEAN", ["True", "False"]), showCustomUi=True
+    )
     set_data_validation_for_cell_range(ss.worksheet, cell, validation)
 
 
@@ -165,10 +165,12 @@ def set_insert_row_height(ss: "SheepySpreadsheet", row: int) -> None:
         ss (SheepySpreadsheet): Spreadsheet object
         row (int, optional): Row number
     """
+    if ss.worksheet is None:
+        raise ValueError("Worksheet of SheepySpreadsheet object is not set.")
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
     ws: gspread.Worksheet = ss.worksheet
     # Set height of row
-    batch.set_row_height(ws, f"{row}", SHEET_ROW_HEIGHT)
+    batch.set_row_height(ws, f"{row}", SHEET_ROW_HEIGHT)  # type: ignore
     batch.execute()
 
 
@@ -180,13 +182,15 @@ def setup_columns(ss: "SheepySpreadsheet") -> None:
     Args:
         ss (SheepySpreadsheet): Spreadsheet object
     """
+    if ss.worksheet is None:
+        raise ValueError("Worksheet of SheepySpreadsheet object is not set.")
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
     cf: CellFormat = CellFormat(wrapStrategy="WRAP", verticalAlignment="MIDDLE")
     ws: gspread.Worksheet = ss.worksheet
 
     for format_tuple in COLUMN_WIDTHS:
         # col, width = format_tuple
-        batch.set_column_width(ws, *format_tuple)
+        batch.set_column_width(ws, *format_tuple)  # type: ignore
 
-    batch.format_cell_range(ws, SHEET_PLOT_COL, cf)
+    batch.format_cell_range(ws, SHEET_PLOT_COL, cf)  # type: ignore
     batch.execute()
