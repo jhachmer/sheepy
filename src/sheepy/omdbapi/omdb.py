@@ -42,6 +42,7 @@ class Movie:
 
 def _get_movie_data(imdb_id: str) -> dict:
     """Get movie data from the Open Movie Database (OMDb) API.
+    Uses IMDb-ID for search.
 
     Args:
         imdb_id (str): The IMDb ID of the movie to search for.
@@ -86,6 +87,58 @@ def _get_movie_data(imdb_id: str) -> dict:
     return response_json
 
 
+def _get_movie_data_by_name_and_year(name: str, year: int):
+    """Get movie data from the Open Movie Database (OMDb) API.
+    Uses movie name and release year for search
+
+    Args:
+        name (str): Name of movie
+        year (int): release year of movie
+
+    Returns:
+        dict: A dictionary containing the movie data.
+
+    Raises:
+        SystemExit: If an HTTP error occurs.
+        SystemExit: If a general request exception occurs.
+        ValueError: If no response is received from the API.
+    """
+    try:
+        response: Response = requests.get(
+            URL + API_KEY + "&t=" + name + "&y=" + str(year), timeout=60
+        )
+        omdb_logger.debug(URL + API_KEY + "&t=" + name + "&y=" + str(year))
+        response.raise_for_status()
+        response_json: dict[str, str] = response.json()
+    except requests.exceptions.HTTPError as he:
+        omdb_logger.error("HTTP Error Code: - %s", str(he))
+        raise SystemExit(f"HTTP Error Code: - {str(he)}") from he
+    except requests.exceptions.RequestException as re:
+        omdb_logger.error("Request Error: %s", str(re))
+        raise SystemExit(f"Request Error: {str(re)}") from re
+    except Exception as e:
+        omdb_logger.error("General Error: %s", str(e))
+        raise SystemExit(f"General Error: {str(e)}") from e
+
+    if response_json["Response"] == "False":
+        omdb_logger.error(
+            "%s - Invalid Name and/or Year: %s (%d). Please try again.",
+            response_json["Error"],
+            name,
+            year,
+        )
+        omdb_logger.debug("Used Title: %s (%d)", name, year)
+        raise SystemExit(f"{response_json['Error']} - Invalid IMDb ID.")
+
+    omdb_logger.info(
+        "Successfully retrieved movie data for %s with IMDb-ID %s.",
+        response_json["Title"],
+        response_json["imdbID"],
+    )
+
+    return response_json
+
+
 def show_info(movie_data: dict[str, str]) -> None:
     """Show the movie information in the CLI.
 
@@ -109,7 +162,13 @@ def show_info(movie_data: dict[str, str]) -> None:
     )
 
 
-def _extract_movie_data(movie_data: dict[str, str], watched: bool, add: bool) -> Movie:
+# TODO: make suggested_by an argument
+def _extract_movie_data(
+    movie_data: dict[str, str],
+    watched: bool,
+    add: bool,
+    suggested_by: str = SUGGESTED_BY,
+) -> Movie:
     """Extract only the necessary data from the movie_data dictionary.
 
     Args:
@@ -126,9 +185,9 @@ def _extract_movie_data(movie_data: dict[str, str], watched: bool, add: bool) ->
         year=movie_data.get("Year", ""),
         genre=movie_data.get("Genre", ""),
         runtime=movie_data.get("Runtime", ""),
-        suggested_by=SUGGESTED_BY,
+        suggested_by=suggested_by,
         imdb_rating=movie_data.get("imdbRating", "N/A"),
-        tomatometer=_extract_tomatometer(movie_data.get("Ratings", [])),
+        tomatometer=_extract_tomatometer(movie_data.get("Ratings", [])), # type: ignore
         director=movie_data.get("Director", ""),
         plot=(
             movie_data.get("Plot", "")
@@ -164,7 +223,7 @@ def _extract_tomatometer(ratings: list) -> str:
     return tomato_rating
 
 
-def process_movie_request(
+def process_movie_request_imdb_id(
     imdb_id: str, watched: bool = False, add: bool = True
 ) -> dict[str, str]:
     """
@@ -180,4 +239,28 @@ def process_movie_request(
     """
     raw_movie_info: dict[str, str] = _get_movie_data(imdb_id)
     extr_movie_data = _extract_movie_data(raw_movie_info, watched, add)
+    return asdict(extr_movie_data)
+
+
+def process_movie_request_name_year(
+    name: str,
+    year: int,
+    watched: bool = False,
+    add: bool = True,
+    suggested_by: str = SUGGESTED_BY,
+) -> dict[str, str]:
+    """
+    Processes movie request from OMDb API and creates dict with movie data
+
+    Args:
+        name (str): Name of movie
+        year (int): release year of movie
+        watched (bool, optional): Whether to tick watched?-checkbox. Defaults to False
+        add (bool, optional): Whether to add movie data. Defaults to True
+
+    Returns:
+        dict: Dictionary containing movie data
+    """
+    raw_movie_info: dict[str, str] = _get_movie_data_by_name_and_year(name, year)
+    extr_movie_data = _extract_movie_data(raw_movie_info, watched, add, suggested_by)
     return asdict(extr_movie_data)
