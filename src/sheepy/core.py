@@ -1,4 +1,4 @@
-from sheepy.omdbapi.omdb import process_movie_request, show_info
+from sheepy.omdbapi.omdb import process_movie_request_imdb_id, show_info
 from sheepy.spreadsheet.spreadsheet import SheepySpreadsheet
 
 
@@ -15,7 +15,7 @@ def add_movie_to_sheet(
         imdb_id (str): IMDB ID of movie
         watched (bool, optional): Whether to tick watched checkbox
     """
-    insert_data: dict[str, str] = process_movie_request(imdb_id, watched, True)
+    insert_data: dict[str, str] = process_movie_request_imdb_id(imdb_id, watched, True)
     ss.add_values_to_sheet(insert_data)
 
 
@@ -26,7 +26,7 @@ def view_movie_info(imdb_id: str) -> None:
     Args:
         imdb_id: IMDB ID of movie
     """
-    view_data: dict[str, str] = process_movie_request(imdb_id, False, False)
+    view_data: dict[str, str] = process_movie_request_imdb_id(imdb_id, False, False)
     show_info(view_data)
 
 
