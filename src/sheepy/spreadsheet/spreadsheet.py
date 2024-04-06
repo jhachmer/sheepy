@@ -4,7 +4,6 @@ import os
 from typing import Any, Self
 
 import gspread
-from dotenv import load_dotenv
 from gspread.utils import ValueInputOption, rowcol_to_a1
 from requests import Response
 
@@ -211,6 +210,19 @@ class SheepySpreadsheet:
             if worksheet is None:
                 raise ValueError("Could not find any worksheets with given arguments")
         return worksheet
+
+    def read_row(self, row_number: int) -> list[Any]:
+        """Reads Value of a row
+
+        Args:
+            row_number (int): Row Number
+
+        Returns:
+            list[Any]: Returns list of values present in row
+        """
+        if self.worksheet is None:
+            raise ValueError("Worksheet of SheepySpreadsheet object is not set.")
+        return self.worksheet.row_values(row_number)
 
     def find_free_row(self) -> int:
         """Finds first row not populated with data
