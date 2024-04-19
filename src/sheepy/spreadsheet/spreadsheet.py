@@ -7,10 +7,12 @@ import gspread
 from gspread.utils import ValueInputOption, rowcol_to_a1
 from requests import Response
 
+from sheepy.omdbapi.omdb import show_info
 from sheepy.util.logger import get_logger
 
 from .formatting import (
     check_headers,
+    color_odd_rows,
     set_insert_row_height,
     setup_checkboxes,
     setup_sheet_formatting,
@@ -257,6 +259,7 @@ class SheepySpreadsheet:
         self.logger.debug("%s", values)
         setup_checkboxes(ss=self, cell=f"A{insert_row}")
         set_insert_row_height(ss=self, row=insert_row)
+        color_odd_rows(ss=self, row=insert_row)
         self.worksheet.update(
             range_name=a1_notation,
             values=values,
@@ -264,7 +267,7 @@ class SheepySpreadsheet:
         )
         self.logger.info(
             f"\n{'#' * 60}\n"
-            f"Added Movie Info: {movie_dict}\n"
+            f"Added Movie Info: {show_info(movie_dict)}\n"
             f"to Spreadsheet:\n{self}\n"
             f"{'#' * 60}\n"
         )
