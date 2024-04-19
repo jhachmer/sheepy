@@ -27,7 +27,8 @@ from .sheet_util import (
 if TYPE_CHECKING:
     from .spreadsheet import SheepySpreadsheet
 
-# TODO: Title, Genre, Plot left-alligned
+
+# TODO: Title, Genre, Plot left-aligned
 # TODO: Custom Image width/height
 
 
@@ -90,26 +91,32 @@ def setup_sheet_text_and_color(ss: "SheepySpreadsheet") -> None:
     Args:
         ss (SheepySpreadsheet): Spreadsheet object
     """
-    fmt_odd: CellFormat = CellFormat(
-        backgroundColor=SHEET_BACKGROUND_COLOR_ODD,
-        textFormat=TextFormat(foregroundColor=SHEET_TEXT_COLOR),
-        horizontalAlignment="CENTER",
-        verticalAlignment="MIDDLE",
-    )
-    fmt_even: CellFormat = CellFormat(
+    fmt_center: CellFormat = CellFormat(
         backgroundColor=SHEET_BACKGROUND_COLOR_EVEN,
         textFormat=TextFormat(foregroundColor=SHEET_TEXT_COLOR),
         horizontalAlignment="CENTER",
         verticalAlignment="MIDDLE",
     )
+    fmt_left_align: CellFormat = CellFormat(
+        backgroundColor=SHEET_BACKGROUND_COLOR_EVEN,
+        textFormat=TextFormat(foregroundColor=SHEET_TEXT_COLOR),
+        horizontalAlignment="LEFT",
+        verticalAlignment="MIDDLE",
+    )
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
     # convert ascii numbers to column names
     for i in range(65, 77):
-        if (i % 2) == 1:
-            batch.format_cell_range(ss.worksheet, chr(i), fmt_odd)  # type: ignore
+        if chr(i) in ["B", "D", "J"]:
+            batch.format_cell_range(ss.worksheet, chr(i), fmt_left_align)  # type: ignore
         else:
-            batch.format_cell_range(ss.worksheet, chr(i), fmt_even)  # type: ignore
+            batch.format_cell_range(ss.worksheet, chr(i), fmt_center)  # type: ignore
     batch.execute()
+
+# TODO: Add docstring
+def color_odd_rows(ss: "SheepySpreadsheet", row: int) -> None:
+    if row % 2 == 0:
+        gray_row: CellFormat = CellFormat(backgroundColor=SHEET_BACKGROUND_COLOR_ODD)
+        format_cell_range(ss.worksheet, f"A{row}:L{row}", gray_row)
 
 
 def header_format(ss: "SheepySpreadsheet") -> None:
@@ -128,8 +135,8 @@ def header_format(ss: "SheepySpreadsheet") -> None:
 
 
 def setup_checkboxes(
-    ss: "SheepySpreadsheet",
-    cell: str,
+        ss: "SheepySpreadsheet",
+        cell: str,
 ) -> None:
     """
     Sets up Checkboxes for watched value
@@ -137,9 +144,8 @@ def setup_checkboxes(
     Args:
         ss (SheepySpreadsheet): Spreadsheet object
         cell (str): Cell to put Checkbox
-        validation (DataValidationRule): DataValidation rule (Default value = None)
     """
-    validation = DataValidationRule(
+    validation: DataValidationRule = DataValidationRule(
         BooleanCondition("BOOLEAN", ["True", "False"]), showCustomUi=True
     )
     set_data_validation_for_cell_range(ss.worksheet, cell, validation)
