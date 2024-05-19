@@ -4,6 +4,8 @@ token*.pickle
 
 new.env
 
+convert.py
+
 #virtual environment
 sheepy-venv/
 
