@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from sheepy.core import (
     add_movie_to_sheet,
@@ -47,7 +48,7 @@ def read_user_cli_args() -> argparse.Namespace:
     )
     add_parser.set_defaults(func=cli_add_movie)
 
-    return global_parser.parse_args()
+    return global_parser.parse_args(args=None if sys.argv[1:] else ['--help'])
 
 
 def cli_new_sheet(args: argparse.Namespace) -> None:
