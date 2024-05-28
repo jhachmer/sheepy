@@ -162,7 +162,6 @@ def show_info(movie_data: dict[str, str]) -> None:
     )
 
 
-# TODO: make suggested_by an argument
 def _extract_movie_data(
     movie_data: dict[str, str],
     watched: bool,
@@ -187,7 +186,7 @@ def _extract_movie_data(
         runtime=movie_data.get("Runtime", ""),
         suggested_by=suggested_by,
         imdb_rating=movie_data.get("imdbRating", "N/A"),
-        tomatometer=_extract_tomatometer(movie_data.get("Ratings", [])), # type: ignore
+        tomatometer=_extract_tomatometer(movie_data.get("Ratings", [])),  # type: ignore
         director=movie_data.get("Director", ""),
         plot=(
             movie_data.get("Plot", "")
