@@ -7,7 +7,7 @@ def main() -> None:
     Main entry for cli logic
     """
     logger = get_logger(__name__)
-    logger.info("Hello there, welcome to Sheepy :)")
+    print("Hello there, welcome to Sheepy :)\N{snake}\N{snake}\N{snake}\n")
     args = read_user_cli_args()
     logger.debug(args)
 
