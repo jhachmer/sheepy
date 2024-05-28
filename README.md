@@ -2,7 +2,7 @@
 ![Overview](/readme_assests/overview.png "Overview")
 
 # Requirements
-- Python 3.12 (old versions may also work)
+- Python 3.12 (older versions may also work)
 - Google Account
 
 # Setup
