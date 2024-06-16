@@ -242,7 +242,7 @@ class SheepySpreadsheet:
         return len(row_list) + 1
 
     def add_values_to_sheet(self, movie_dict: dict) -> None:
-        """_summary_
+        """Adds values to worksheet
 
         Args:
             movie_dict (dict): _description_
