@@ -13,6 +13,8 @@ sheepy-venv/
 *.log
 logs/
 
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
