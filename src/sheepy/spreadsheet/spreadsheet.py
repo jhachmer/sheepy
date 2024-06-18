@@ -32,10 +32,10 @@ class SheepySpreadsheet:
             worksheet_index (str | None, optional): Worksheet Index. Defaults to None.
 
         Raises:
-            ValueError: _description_
-            SystemExit: _description_
-            SystemExit: _description_
-            SystemExit: _description_
+            ValueError: if neither spreadsheet_id or worksheet_index was provided
+            SystemExit: if unable to create gspread service account
+            SystemExit: if spreadsheet was not found
+            SystemExit: if worksheet was not found
         """
         try:
             self.client: gspread.client.Client = gspread.service_account()
@@ -188,10 +188,9 @@ class SheepySpreadsheet:
             index (int | None, optional): Index of worksheet. Defaults to None.
 
         Raises:
-            ValueError: _description_
-            ValueError: _description_
-            SystemExit: _description_
-            ValueError: _description_
+            ValueError: if spreadsheet is not set on object istance
+            SystemExit: if worksheet could not be found
+            ValueError: if worksheet is still not set
 
         Returns:
             gspread.worksheet.Worksheet: Instance of Worksheet
@@ -245,10 +244,10 @@ class SheepySpreadsheet:
         """Adds values to worksheet
 
         Args:
-            movie_dict (dict): _description_
+            movie_dict (dict): movie dictionary wth movie info
 
         Raises:
-            ValueError: _description_
+            ValueError: if worksheet is not set
         """
         if self.worksheet is None:
             raise ValueError("Select a worksheet first")
