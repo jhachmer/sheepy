@@ -26,7 +26,6 @@ class Movie:
     Represents movie from OMDb API.
     Only relevant fields are saved.
     """
-
     watched: str
     title: str
     year: str
