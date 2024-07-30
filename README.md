@@ -22,6 +22,10 @@
     ```
 
 # Usage
+
+### Logging
+Change logging level by passing a `LOG_LEVEL` environment variable
+
 ### General
 ```sh
 usage: sheepy \[-h] {new,view,add} ...

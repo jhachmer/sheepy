@@ -11,8 +11,10 @@ if not os.path.exists("logs"):
 
 LOG_FORMAT = "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
 
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
 logging.basicConfig(
-    level=logging.INFO,
+    level=LOG_LEVEL,
     format=LOG_FORMAT,
     handlers=[
         logging.FileHandler(filename="logs/file.log"),
