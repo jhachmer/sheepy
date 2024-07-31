@@ -72,6 +72,9 @@ class SheepySpreadsheet:
             f"Worksheet index: {self.worksheet_index}"
         )
 
+    def __str__(self):
+        return f"ID: {self.spreadsheet_id}, Index: {self.worksheet_index}"
+
     @classmethod
     def from_env_file(cls) -> Self:
         """Instantiate SheepySpreadsheet from environment variable config
