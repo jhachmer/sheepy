@@ -112,9 +112,17 @@ def setup_sheet_text_and_color(ss: "SheepySpreadsheet") -> None:
             batch.format_cell_range(ss.worksheet, chr(i), fmt_center)  # type: ignore
     batch.execute()
 
-# TODO: Add docstring
-def color_odd_rows(ss: "SheepySpreadsheet", row: int) -> None:
-    if row % 2 == 0:
+
+def color_odd_rows(ss: "SheepySpreadsheet", row: int, nth: int) -> None:
+    """Changes color of every nth row to value specified
+     in sheet_config.py (SHEET_BACKGROUND_COLOR_ODD)
+
+    Args:
+        ss (SheepySpreadsheet): Spreadsheet object
+        row (int): number of current row
+        nth (int): number of every nth row to be colored
+    """
+    if row % nth == 0:
         gray_row: CellFormat = CellFormat(backgroundColor=SHEET_BACKGROUND_COLOR_ODD)
         format_cell_range(ss.worksheet, f"A{row}:L{row}", gray_row)
 
