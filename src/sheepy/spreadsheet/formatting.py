@@ -143,8 +143,8 @@ def header_format(ss: "SheepySpreadsheet") -> None:
 
 
 def setup_checkboxes(
-        ss: "SheepySpreadsheet",
-        cell: str,
+    ss: "SheepySpreadsheet",
+    cell: str,
 ) -> None:
     """
     Sets up Checkboxes for watched value
