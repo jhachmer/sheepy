@@ -1,14 +1,14 @@
-"""This module contains the core functionality of the sheepy application."""
+"""This module contains the functionality to interact with the OMDb database/API."""
 
 import os
 from dataclasses import asdict, dataclass
+from typing import Any
 
 import requests
-from requests import Response
 from tabulate import tabulate
 
 from sheepy.util.logger import get_logger
-from sheepy.util.string_util import insert_newlines
+from sheepy.util.string_util import build_request_url, insert_newlines
 
 URL = "http://www.omdbapi.com/?apikey="
 API_KEY = os.environ.get("OMDB_API_KEY", "")
@@ -26,6 +26,7 @@ class Movie:
     Represents movie from OMDb API.
     Only relevant fields are saved.
     """
+
     watched: str
     title: str
     year: str
@@ -38,8 +39,15 @@ class Movie:
     plot: str
     poster: str
 
+    def __repr__(self) -> str:
+        return f"{self.title} ({self.year})"
 
-def _get_movie_data(imdb_id: str) -> dict:
+    def __str__(self) -> str:
+        return f"""{self.title} ({self.year}) {self.runtime} min.
+         Suggested by: {self.suggested_by}"""
+
+
+def _get_movie_data(imdb_id: str) -> dict[str, Any]:
     """Get movie data from the Open Movie Database (OMDb) API.
     Uses IMDb-ID for search.
 
@@ -55,7 +63,11 @@ def _get_movie_data(imdb_id: str) -> dict:
         ValueError: If no response is received from the API.
     """
     try:
-        response: Response = requests.get(URL + API_KEY + "&i=" + imdb_id, timeout=60)
+        request_url: str = build_request_url(
+            base_url=URL, api_key=API_KEY, title_or_id=imdb_id
+        )
+        response: requests.Response = requests.get(request_url, timeout=60)
+        omdb_logger.debug(f"Used request URL: {request_url}")
         response.raise_for_status()
         response_json: dict[str, str] = response.json()
     except requests.exceptions.HTTPError as he:
@@ -103,10 +115,11 @@ def _get_movie_data_by_name_and_year(name: str, year: int):
         ValueError: If no response is received from the API.
     """
     try:
-        response: Response = requests.get(
-            URL + API_KEY + "&t=" + name + "&y=" + str(year), timeout=60
+        request_url: str = build_request_url(
+            base_url=URL, api_key=API_KEY, title_or_id=name, year=year
         )
-        omdb_logger.debug(URL + API_KEY + "&t=" + name + "&y=" + str(year))
+        response: requests.Response = requests.get(request_url, timeout=60)
+        omdb_logger.debug(f"Used request URL: {request_url}")
         response.raise_for_status()
         response_json: dict[str, str] = response.json()
     except requests.exceptions.HTTPError as he:
@@ -138,7 +151,7 @@ def _get_movie_data_by_name_and_year(name: str, year: int):
     return response_json
 
 
-def show_info(movie_data: dict[str, str]) -> None:
+def show_info(movie_data: dict[str, Any]) -> str:
     """Show the movie information in the CLI.
 
     Args:
@@ -150,14 +163,12 @@ def show_info(movie_data: dict[str, str]) -> None:
     except KeyError:
         omdb_logger.error("Unable to delete keys from movie dict")
     table: list[list[str]] = [list(movie_data.keys()), list(movie_data.values())]
-    print(
-        tabulate(
-            table,
-            headers="firstrow",
-            tablefmt="fancy_grid",
-            stralign="center",
-            numalign="center",
-        )
+    return tabulate(
+        table,
+        headers="firstrow",
+        tablefmt="fancy_grid",
+        stralign="center",
+        numalign="center",
     )
 
 
@@ -222,7 +233,10 @@ def _extract_tomatometer(ratings: list) -> str:
 
 
 def process_movie_request_imdb_id(
-    imdb_id: str, watched: bool = False, add: bool = True
+    imdb_id: str,
+    watched: bool = False,
+    add: bool = True,
+    suggested_by: str = SUGGESTED_BY,
 ) -> dict[str, str]:
     """
     Processes movie request from OMDb API and creates dict with movie data
@@ -236,7 +250,7 @@ def process_movie_request_imdb_id(
         dict: Dictionary containing movie data
     """
     raw_movie_info: dict[str, str] = _get_movie_data(imdb_id)
-    extr_movie_data = _extract_movie_data(raw_movie_info, watched, add)
+    extr_movie_data = _extract_movie_data(raw_movie_info, watched, add, suggested_by)
     return asdict(extr_movie_data)
 
 

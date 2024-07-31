@@ -1,4 +1,4 @@
-from sheepy.omdbapi.omdb import process_movie_request_imdb_id, show_info
+from sheepy.omdb.api import process_movie_request_imdb_id, show_info
 from sheepy.spreadsheet.spreadsheet import SheepySpreadsheet
 
 

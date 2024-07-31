@@ -7,7 +7,8 @@ import gspread
 from gspread.utils import ValueInputOption, rowcol_to_a1
 from requests import Response
 
-from sheepy.omdbapi.omdb import show_info
+from sheepy.omdb.api import show_info
+from sheepy.spreadsheet.sheet_config import SHEET_NTH_ROW
 from sheepy.util.logger import get_logger
 
 from .formatting import (
