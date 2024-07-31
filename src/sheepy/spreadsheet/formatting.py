@@ -13,7 +13,7 @@ from gspread_formatting import (
     set_frozen,
 )
 
-from .sheet_util import (
+from .sheet_config import (
     COLUMN_WIDTHS,
     COLUMNS,
     SHEET_BACKGROUND_COLOR_EVEN,
