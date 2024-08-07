@@ -262,7 +262,7 @@ class SheepySpreadsheet:
         self.logger.debug("%s", values)
         setup_checkboxes(ss=self, cell=f"A{insert_row}")
         set_insert_row_height(ss=self, row=insert_row)
-        color_odd_rows(ss=self, row=insert_row)
+        color_odd_rows(ss=self, row=insert_row, nth=SHEET_NTH_ROW)
         self.worksheet.update(
             range_name=a1_notation,
             values=values,
