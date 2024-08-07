@@ -152,7 +152,7 @@ class SheepySpreadsheet:
                 "spreadsheet_id is None. Call set_instance_variables first"
             )
         perms: list = self.spreadsheet.list_permissions()
-        perm_id: Any = None
+        perm_id: str | None = None
         for d in perms:
             if d["emailAddress"] == email:
                 perm_id = d["id"]
