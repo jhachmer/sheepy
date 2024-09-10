@@ -98,7 +98,7 @@ def _get_movie_data(imdb_id: str) -> dict[str, Any]:
     return response_json
 
 
-def _get_movie_data_by_name_and_year(name: str, year: int):
+def _get_movie_data_by_name_and_year(name: str, year: int) -> dict[str, str]:
     """Get movie data from the Open Movie Database (OMDb) API.
     Uses movie name and release year for search
 
@@ -134,10 +134,7 @@ def _get_movie_data_by_name_and_year(name: str, year: int):
 
     if response_json["Response"] == "False":
         omdb_logger.error(
-            "%s - Invalid Name and/or Year: %s (%d). Please try again.",
-            response_json["Error"],
-            name,
-            year,
+            f"{response_json["Error"]} - Invalid Name and/or Year: {name} ({year})."
         )
         omdb_logger.debug("Used Title: %s (%d)", name, year)
         raise SystemExit(f"{response_json['Error']} - Invalid IMDb ID.")
@@ -181,12 +178,12 @@ def _extract_movie_data(
     """Extract only the necessary data from the movie_data dictionary.
 
     Args:
-        movie_data (dict): The movie data to extract from.
+        movie_data (dict): The movie data received from OMDb.
         watched (bool): Set to true to check watched-checkbox.
         add (bool): Set to true when adding to spreadsheet
 
     Returns:
-        Movie: The movie data
+        Movie: The relevant movie data that is added to the sheet
     """
     movie: Movie = Movie(
         watched="TRUE" if watched else "FALSE",
@@ -196,7 +193,7 @@ def _extract_movie_data(
         runtime=movie_data.get("Runtime", ""),
         suggested_by=suggested_by,
         imdb_rating=movie_data.get("imdbRating", "N/A"),
-        tomatometer=_extract_tomatometer(movie_data.get("Ratings", [])),  # type: ignore
+        tomatometer=_extract_tomatometer(movie_data.get("Ratings", [])),
         director=movie_data.get("Director", ""),
         plot=(
             movie_data.get("Plot", "")
@@ -212,7 +209,7 @@ def _extract_movie_data(
     return movie
 
 
-def _extract_tomatometer(ratings: list) -> str:
+def _extract_tomatometer(ratings: list[Any] | str) -> str:
     """Extracts Rotten Tomato Rating from movie data dictionary.
 
     Args:
@@ -221,15 +218,10 @@ def _extract_tomatometer(ratings: list) -> str:
     Returns:
         str: Rotten Tomato Rating in Percentage
     """
-    tomato_rating: str = next(
-        (
-            rating["Value"]
-            for rating in ratings
-            if rating["Source"] == "Rotten Tomatoes"
-        ),
-        "N/A",
-    )
-    return tomato_rating
+    for rating in ratings:
+        if rating["Source"] == "Rotten Tomatoes":  # type: ignore
+            return rating["Value"]  # type: ignore
+    return "N/A"
 
 
 def process_movie_request_imdb_id(
