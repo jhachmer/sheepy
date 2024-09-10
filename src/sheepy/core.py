@@ -27,7 +27,7 @@ def view_movie_info(imdb_id: str) -> None:
         imdb_id: IMDB ID of movie
     """
     view_data: dict[str, str] = process_movie_request_imdb_id(imdb_id, False, False)
-    show_info(view_data)
+    print(show_info(view_data))
 
 
 def get_spreadsheet(ss_id: str, ws_idx: str) -> SheepySpreadsheet:
