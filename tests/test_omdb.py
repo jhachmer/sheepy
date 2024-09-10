@@ -1,9 +1,11 @@
+from typing import Any
+
 import pytest
-from sheepy.omdbapi.omdb import Movie, _extract_movie_data
+from sheepy.omdb.api import Movie, _extract_movie_data, _extract_tomatometer
 
 
 @pytest.fixture
-def raw_movie_info() -> dict[str, str]:
+def raw_movie_info() -> dict[str, Any]:
     return {
         "Title": "Blade Runner",
         "Year": "1982",
@@ -52,3 +54,15 @@ def test_extract_movie_data(raw_movie_info):
         poster='=IMAGE("https://m.media-amazon.com/images/M/MV5BNzQzMzJhZTEtOWM4NS00MTdhLTg0YjgtMjM4MDRkZjUwZDBlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg")',
     )
     assert mov == _extract_movie_data(raw_movie_info, watched=True, add=True)
+
+
+@pytest.fixture
+def ratings():
+    return [
+        {"Source": "Internet Movie Database", "Value": "8.1/10"},
+        {"Source": "Rotten Tomatoes", "Value": "89%"},
+    ]
+
+
+def test_extract_tomatometer(ratings):
+    assert _extract_tomatometer(ratings) == "89%"
