@@ -1,12 +1,15 @@
 """This module contains the functionality to interact with the OMDb database/API."""
 
 import os
-from dataclasses import asdict, dataclass
+from dataclasses import asdict
 from typing import Any
 
 import requests
 from tabulate import tabulate
 
+from sheepy.model.movie import Movie
+from sheepy.model.rating import Rating
+from sheepy.util.exceptions import RatingRetrievalError
 from sheepy.util.logger import get_logger
 from sheepy.util.string_util import build_request_url, insert_newlines
 
@@ -18,33 +21,6 @@ SUGGESTED_BY = os.environ.get("SUGGESTED_BY", "Someone")
 SPREADSHEET_ID = os.environ.get("SPREADSHEET_ID", "")
 
 omdb_logger = get_logger(__name__)
-
-
-@dataclass
-class Movie:
-    """
-    Represents movie from OMDb API.
-    Only relevant fields are saved.
-    """
-
-    watched: str
-    title: str
-    year: str
-    genre: str
-    runtime: str
-    suggested_by: str
-    imdb_rating: str
-    tomatometer: str
-    director: str
-    plot: str
-    poster: str
-
-    def __repr__(self) -> str:
-        return f"{self.title} ({self.year})"
-
-    def __str__(self) -> str:
-        return f"""{self.title} ({self.year}) {self.runtime} min.
-         Suggested by: {self.suggested_by}"""
 
 
 def _get_movie_data(imdb_id: str) -> dict[str, Any]:
@@ -192,8 +168,6 @@ def _extract_movie_data(
         genre=movie_data.get("Genre", ""),
         runtime=movie_data.get("Runtime", ""),
         suggested_by=suggested_by,
-        imdb_rating=movie_data.get("imdbRating", "N/A"),
-        tomatometer=_extract_tomatometer(movie_data.get("Ratings", [])),
         director=movie_data.get("Director", ""),
         plot=(
             movie_data.get("Plot", "")
@@ -205,23 +179,9 @@ def _extract_movie_data(
             if add
             else insert_newlines(movie_data.get("Poster", ""), 30)
         ),
+        rating=Rating.from_json(movie_data),
     )
     return movie
-
-
-def _extract_tomatometer(ratings: list[Any] | str) -> str:
-    """Extracts Rotten Tomato Rating from movie data dictionary.
-
-    Args:
-        ratings (list): List of Ratings from OMDb API
-
-    Returns:
-        str: Rotten Tomato Rating in Percentage
-    """
-    for rating in ratings:
-        if rating["Source"] == "Rotten Tomatoes":  # type: ignore
-            return rating["Value"]  # type: ignore
-    return "N/A"
 
 
 def process_movie_request_imdb_id(
@@ -242,8 +202,11 @@ def process_movie_request_imdb_id(
         dict: Dictionary containing movie data
     """
     raw_movie_info: dict[str, str] = _get_movie_data(imdb_id)
-    extr_movie_data = _extract_movie_data(raw_movie_info, watched, add, suggested_by)
-    return asdict(extr_movie_data)
+    extr_movie_data: Movie = _extract_movie_data(
+        raw_movie_info, watched, add, suggested_by
+    )
+    movie_dict = extr_movie_data.build_dict()
+    return movie_dict
 
 
 def process_movie_request_name_year(
@@ -266,5 +229,8 @@ def process_movie_request_name_year(
         dict: Dictionary containing movie data
     """
     raw_movie_info: dict[str, str] = _get_movie_data_by_name_and_year(name, year)
-    extr_movie_data = _extract_movie_data(raw_movie_info, watched, add, suggested_by)
-    return asdict(extr_movie_data)
+    extr_movie_data: Movie = _extract_movie_data(
+        raw_movie_info, watched, add, suggested_by
+    )
+    movie_dict = extr_movie_data.build_dict()
+    return movie_dict
