@@ -1,4 +1,5 @@
 import pytest
+
 from sheepy.util.string_util import insert_newlines
 
 
