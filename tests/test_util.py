@@ -8,5 +8,6 @@ def test_string():
     return "Hel\nlo \nWor\nld"
 
 
-def test_insert_newlines(test_string):
-    assert test_string == insert_newlines("Hello World", 3)
+class TestUtil:
+    def test_insert_newlines(self, test_string):
+        assert test_string == insert_newlines("Hello World", 3)
