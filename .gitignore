@@ -6,6 +6,9 @@ new.env
 
 convert.py
 
+*.csv
+*.xlsx
+
 #virtual environment
 sheepy-venv/
 
