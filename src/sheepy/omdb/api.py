@@ -133,13 +133,14 @@ def show_info(movie_data: dict[str, Any]) -> str:
     try:
         del movie_data["watched"]
         del movie_data["poster"]
+        del movie_data["plot"]
     except KeyError:
         omdb_logger.error("Unable to delete keys from movie dict")
     table: list[list[str]] = [list(movie_data.keys()), list(movie_data.values())]
     return tabulate(
         table,
         headers="firstrow",
-        tablefmt="fancy_grid",
+        tablefmt="plain",
         stralign="center",
         numalign="center",
     )
