@@ -1,12 +1,14 @@
 """Spreadsheet Module"""
 
+import csv
 import os
 from typing import Any, Self
 
 import gspread
-from gspread.utils import ValueInputOption, rowcol_to_a1
+from gspread.utils import ExportFormat, ValueInputOption, rowcol_to_a1
 from requests import Response
 
+from sheepy import spreadsheet
 from sheepy.omdb.api import show_info
 from sheepy.spreadsheet.sheet_config import SHEET_NTH_ROW
 from sheepy.util.logger import get_logger
@@ -39,7 +41,7 @@ class SheepySpreadsheet:
             SystemExit: if worksheet was not found
         """
         try:
-            self.client: gspread.client.Client = gspread.service_account()
+            self.client = gspread.service_account()  # type: ignore
         except FileNotFoundError as fnfe:
             raise SystemExit(
                 f"Unable to create service account. Check credentials file. {str(fnfe)}"
@@ -164,9 +166,21 @@ class SheepySpreadsheet:
         resp: Response = self.spreadsheet.transfer_ownership(permission_id=perm_id)
         if resp.status_code == 200:
             self.logger.info(
-                "Ownership transfer initiated."
+                "Ownership transfer initiated.\n"
                 + "Accept in Google Spreadsheet Web Interface"
             )
+
+    def download_csv(self):
+        """Downloads spreadsheet as CSV
+
+        Raises:
+            AttributeError: raises error if spreadsheet is not set
+        """
+        if self.spreadsheet is None:
+            raise AttributeError("speadsheet value is empty")
+        export_file = self.spreadsheet.export(format=ExportFormat.EXCEL)
+        with open("output.xlsx", "wb") as f:
+            f.write(export_file)
 
     def share_spreadsheet(self, email: str, account_type: str, role: str) -> None:
         """Shares Spreadsheet with another account.
@@ -268,9 +282,5 @@ class SheepySpreadsheet:
             values=values,
             value_input_option=ValueInputOption.user_entered,
         )
-        self.logger.info(
-            f"\n{'#' * 60}\n"
-            f"Added Movie Info: {show_info(movie_dict)}\n"
-            f"to Spreadsheet:\n{self}\n"
-            f"{'#' * 60}\n"
-        )
+        info = show_info(movie_dict)
+        self.logger.info(f"Added Movie Info: \n{info}")

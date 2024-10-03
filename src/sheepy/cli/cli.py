@@ -4,6 +4,7 @@ import sys
 from sheepy.core import (
     add_movie_to_sheet,
     create_new_sheet,
+    download_csv,
     get_env_spreadsheet,
     view_movie_info,
 )
@@ -47,8 +48,10 @@ def read_user_cli_args() -> argparse.Namespace:
         help="Set to mark movie as already watched (Defaults to False)",
     )
     add_parser.set_defaults(func=cli_add_movie)
+    dl_parser = subparsers.add_parser("dl", help="Download spreadsheet as csv")
+    dl_parser.set_defaults(func=cli_download_csv)
 
-    return global_parser.parse_args(args=None if sys.argv[1:] else ['--help'])
+    return global_parser.parse_args(args=None if sys.argv[1:] else ["--help"])
 
 
 def cli_new_sheet(args: argparse.Namespace) -> None:
@@ -80,3 +83,13 @@ def cli_add_movie(args: argparse.Namespace) -> None:
     """
     ss: SheepySpreadsheet = get_env_spreadsheet()
     add_movie_to_sheet(ss=ss, imdb_id=args.imdb_id[0], watched=args.watched)
+
+
+def cli_download_csv(args: argparse.Namespace) -> None:
+    """Downloads Google Spreadsheet in csv format
+
+    Args:
+        args (argparse.Namespace): Arguments parsed from command line
+    """
+    ss: SheepySpreadsheet = get_env_spreadsheet()
+    download_csv(ss)

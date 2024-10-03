@@ -30,6 +30,15 @@ def view_movie_info(imdb_id: str) -> None:
     print(show_info(view_data))
 
 
+def download_csv(ss: SheepySpreadsheet) -> None:
+    """Downloads Google Spreadsheet in csv format
+
+    Args:
+        ss (SheepySpreadsheet): SheepySpreadsheet instance
+    """
+    ss.download_csv()
+
+
 def get_spreadsheet(ss_id: str, ws_idx: str) -> SheepySpreadsheet:
     """
     Get a Spreadsheet by id
