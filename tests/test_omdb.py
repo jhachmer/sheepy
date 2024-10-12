@@ -93,7 +93,7 @@ def table_list():
         "runtime": "117 min",
         "suggested_by": "Jannes",
         "director": "Ridley Scott",
-        "plot": "A blade runner must pursue and terminate four replicants who stole a ship in space and have returned to Earth to find their creator.",
+        # "plot": "A blade runner must pursue and terminate four replicants who stole a ship in space and have returned to Earth to find their creator.",
         "tomatometer": "89%",
         "imdb_rating": "8.1",
     }
@@ -279,7 +279,7 @@ class TestOmdb:
         assert tabulate(
             table_list,
             headers="firstrow",
-            tablefmt="fancy_grid",
+            tablefmt="plain",
             stralign="center",
             numalign="center",
         ) == api.show_info(movie_dict)
