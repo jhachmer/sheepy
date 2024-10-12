@@ -170,7 +170,7 @@ class SheepySpreadsheet:
                 + "Accept in Google Spreadsheet Web Interface"
             )
 
-    def download_csv(self):
+    def download_csv(self) -> None:
         """Downloads spreadsheet as CSV
 
         Raises:
@@ -178,8 +178,8 @@ class SheepySpreadsheet:
         """
         if self.spreadsheet is None:
             raise AttributeError("speadsheet value is empty")
-        export_file = self.spreadsheet.export(format=ExportFormat.EXCEL)
-        with open("output.xlsx", "wb") as f:
+        export_file = self.spreadsheet.export(format=ExportFormat.CSV)
+        with open("sheepy.csv", "wb") as f:
             f.write(export_file)
 
     def share_spreadsheet(self, email: str, account_type: str, role: str) -> None:
