@@ -19,6 +19,15 @@ class Rating:
             self.tomatometer == value.tomatometer
         )
 
+    def __repr__(self) -> str:
+        return (
+            f"""IMDb Rating: {self.imdb_rating} | Rotten Rating: {self.tomatometer}"""
+        )
+
+    def __str__(self):
+        return f"""IMDb: {self.imdb_rating}\n
+                Rotten: {self.tomatometer}"""
+
     @classmethod
     def from_json(cls, movie_data: dict[Any, Any]) -> Self:
         movie_rating = cls()
