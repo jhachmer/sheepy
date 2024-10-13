@@ -10,7 +10,9 @@ class Rating:
     imdb_rating: str | None
     tomatometer: str | None
 
-    def __init__(self, imdb_rating: str | None = None, tomatometer: str | None = None):
+    def __init__(
+        self, imdb_rating: str | None = None, tomatometer: str | None = None
+    ) -> None:
         self.imdb_rating = imdb_rating
         self.tomatometer = tomatometer
 
@@ -24,12 +26,20 @@ class Rating:
             f"""IMDb Rating: {self.imdb_rating} | Rotten Rating: {self.tomatometer}"""
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"""IMDb: {self.imdb_rating}\n
                 Rotten: {self.tomatometer}"""
 
     @classmethod
     def from_json(cls, movie_data: dict[Any, Any]) -> Self:
+        """Extracts Ratings from movie dict and returns Rating boject
+
+        Args:
+            movie_data (dict[Any, Any]): Dictionary with movie info
+
+        Returns:
+            Self: Returns Rating instance with IMDb and RottenTomatoes ratings
+        """
         movie_rating = cls()
         movie_rating.imdb_rating = movie_data.get("imdbRating", "N/A")
         movie_rating.tomatometer = Rating.extract_tomatometer(
