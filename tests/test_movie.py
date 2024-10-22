@@ -5,16 +5,6 @@ from sheepy.model.rating import Rating
 
 
 @pytest.fixture
-def exp_repr() -> str:
-    return "Test (1992), Rt:109, W:TRUE"
-
-
-@pytest.fixture
-def exp_str() -> str:
-    return "Test (1992)"
-
-
-@pytest.fixture
 def build_dict_valid_ratings() -> dict:
     mov_dict = {}
     mov_dict["watched"] = "TRUE"
@@ -49,33 +39,62 @@ def build_dict_no_ratings() -> dict:
 
 
 class TestMovie:
-    base = Movie(
-        "TRUE",
-        "Test",
-        "1992",
-        "Horror, Thriller, Drama",
-        "109",
-        "Jannes",
-        Rating(),
-        "Somebody",
-        "Something happens",
-        "some url",
+    @pytest.fixture
+    def mov(self):
+        return Movie(
+            "TRUE",
+            "Test",
+            "1992",
+            "Horror, Thriller, Drama",
+            "109",
+            "Jannes",
+            Rating(),
+            "Somebody",
+            "Something happens",
+            "some url",
+        )
+
+    @pytest.fixture
+    def same_movie(self, mov) -> tuple[Movie, Movie]:
+        return mov, mov
+
+    @pytest.fixture
+    def diff_movie(self, mov) -> tuple[Movie, Movie]:
+        other = Movie(
+            "TRUE",
+            "Not the Same",
+            "1992",
+            "Horror, Thriller, Drama",
+            "109",
+            "Jannes",
+            Rating(),
+            "Somebody",
+            "Something happens",
+            "some url",
+        )
+        return mov, other
+
+    def test_mov_repr(self, mov):
+        assert "Test (1992)" == repr(mov)
+
+    def test_mov_str(self, mov):
+        assert "Test (1992)" == str(mov)
+
+    @pytest.mark.parametrize(
+        "got,expected", [("same_movie", True), ("diff_movie", False)]
     )
+    def test_mov_eq(self, got, expected, request):
+        mov1, mov2 = request.getfixturevalue(got)
+        assert (mov1 == mov2) == expected
 
-    def test_repr(self, exp_repr):
-        assert exp_repr == repr(self.base)
-
-    def test_str(self, exp_str):
-        assert exp_str == str(self.base)
-
-    def test_build_dict_valid_rating(self, build_dict_valid_ratings):
-        mov = self.base
+    def test_build_dict_valid_rating(self, build_dict_valid_ratings, mov):
+        mov = mov
         mov.rating = Rating("4.5", "45%")
         got = mov.build_dict()
         assert build_dict_valid_ratings == got
 
-    def test_build_dict_no_ratings(self, build_dict_no_ratings):
-        mov = self.base
+    def test_build_dict_no_ratings(self, build_dict_no_ratings, mov):
+        mov = mov
         mov.rating = Rating()
         got = mov.build_dict()
         assert build_dict_no_ratings == got
