@@ -26,7 +26,7 @@ class Movie:
     poster: str
 
     def __repr__(self) -> str:
-        return f"{self.title} ({self.year}), Rt:{self.runtime}, W:{self.watched}"
+        return f"{self.title} ({self.year})"
 
     def __str__(self) -> str:
         return f"{self.title} ({self.year})"

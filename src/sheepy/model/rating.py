@@ -27,8 +27,7 @@ class Rating:
         )
 
     def __str__(self) -> str:
-        return f"""IMDb: {self.imdb_rating}\n
-                Rotten: {self.tomatometer}"""
+        return f"""IMDb: {self.imdb_rating}\nRotten: {self.tomatometer}"""
 
     @classmethod
     def from_json(cls, movie_data: dict[Any, Any]) -> Self:
