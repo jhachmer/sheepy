@@ -26,6 +26,7 @@ dev = [
     "ruff",
     "mypy",
     "pytest",
+    "pytest-mock",
     "sphinx",
     "flit",
 ]
@@ -35,21 +36,8 @@ dev = [
 line-length = 88
 
 [tool.ruff]
-exclude = [
-    ".venv",
-    "logs",
-]
+exclude = [".venv", "logs"]
 line-length = 88
 
 [tool.ruff.lint]
-select = [
-    "F",
-    "E",
-    "W",
-    "N",
-    "I",
-    "C90",
-    "B",
-    "C4",
-    "A"
-]
+select = ["F", "E", "W", "N", "I", "C90", "B", "C4", "A"]
