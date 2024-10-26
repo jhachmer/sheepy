@@ -40,7 +40,8 @@ class Movie:
         )
 
     def build_dict(self) -> dict[str, Any]:
-        """Build dictionary of class attributes used to display movie information
+        """Build dictionary of class attributes used to display
+          or write movie information
 
         Returns:
             dict[str, Any]: _description_
@@ -49,21 +50,10 @@ class Movie:
         attr_list = list(self.__dict__.items())
         for field in attr_list:
             if field[0] == "rating":
-                try:
-                    imdb = field[1].imdb_rating
-                    rotten = field[1].tomatometer
-                    if imdb is None:
-                        mov_dict["imdb_rating"] = "N/A"
-                    else:
-                        mov_dict["imdb_rating"] = imdb
-                    if rotten is None:
-                        mov_dict["tomatometer"] = "N/A"
-                    else:
-                        mov_dict["tomatometer"] = rotten
-                    continue
-                except AttributeError:
-                    self._logger.error("Error retrieving rating data")
-                    mov_dict["imdb_rating"] = "N/A"
-                    mov_dict["tomatometer"] = "N/A"
+                imdb = field[1].imdb_rating
+                rotten = field[1].tomatometer
+                mov_dict["imdb_rating"] = imdb
+                mov_dict["tomatometer"] = rotten
+                continue
             mov_dict[field[0]] = field[1]
         return mov_dict

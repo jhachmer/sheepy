@@ -7,12 +7,10 @@ class Rating:
     Contains IMDb and Rotten Tomatoes Rating
     """
 
-    imdb_rating: str | None
-    tomatometer: str | None
+    imdb_rating: str
+    tomatometer: str
 
-    def __init__(
-        self, imdb_rating: str | None = None, tomatometer: str | None = None
-    ) -> None:
+    def __init__(self, imdb_rating: str, tomatometer: str) -> None:
         self.imdb_rating = imdb_rating
         self.tomatometer = tomatometer
 
@@ -39,11 +37,9 @@ class Rating:
         Returns:
             Self: Returns Rating instance with IMDb and RottenTomatoes ratings
         """
-        movie_rating = cls()
-        movie_rating.imdb_rating = movie_data.get("imdbRating", "N/A")
-        movie_rating.tomatometer = Rating.extract_tomatometer(
-            movie_data.get("Ratings", [])
-        )
+        imdb = movie_data.get("imdbRating", "N/A")
+        rotten = Rating.extract_tomatometer(movie_data.get("Ratings", []))
+        movie_rating = cls(imdb, rotten)
         return movie_rating
 
     @staticmethod
