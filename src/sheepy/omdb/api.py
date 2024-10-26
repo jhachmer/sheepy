@@ -1,7 +1,6 @@
 """This module contains the functionality to interact with the OMDb database/API."""
 
 import os
-from dataclasses import asdict
 from typing import Any
 
 import requests
@@ -9,7 +8,6 @@ from tabulate import tabulate
 
 from sheepy.model.movie import Movie
 from sheepy.model.rating import Rating
-from sheepy.util.exceptions import RatingRetrievalError
 from sheepy.util.logger import get_logger
 from sheepy.util.string_util import build_request_url, insert_newlines
 
