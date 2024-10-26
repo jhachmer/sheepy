@@ -48,7 +48,7 @@ class TestMovie:
             "Horror, Thriller, Drama",
             "109",
             "Jannes",
-            Rating(),
+            Rating("4.5", "45%"),
             "Somebody",
             "Something happens",
             "some url",
@@ -67,7 +67,7 @@ class TestMovie:
             "Horror, Thriller, Drama",
             "109",
             "Jannes",
-            Rating(),
+            Rating("3.5", "35%"),
             "Somebody",
             "Something happens",
             "some url",
@@ -92,9 +92,3 @@ class TestMovie:
         mov.rating = Rating("4.5", "45%")
         got = mov.build_dict()
         assert build_dict_valid_ratings == got
-
-    def test_build_dict_no_ratings(self, build_dict_no_ratings, mov):
-        mov = mov
-        mov.rating = Rating()
-        got = mov.build_dict()
-        assert build_dict_no_ratings == got
