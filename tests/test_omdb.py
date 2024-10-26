@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 from tabulate import tabulate
 
@@ -9,7 +7,7 @@ from sheepy.omdb import api
 
 
 @pytest.fixture
-def raw_movie_info() -> dict[str, Any]:
+def raw_movie_info() -> dict[str, str | list[dict[str, str]]]:
     return {
         "Title": "Blade Runner",
         "Year": "1982",
