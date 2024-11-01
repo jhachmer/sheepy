@@ -1,5 +1,11 @@
+import sys
+
 from sheepy.omdb.api import process_movie_request_imdb_id, show_info
 from sheepy.spreadsheet.spreadsheet import SheepySpreadsheet
+from sheepy.util.exceptions import MovieRetrievalError
+from sheepy.util.logger import get_logger
+
+core_logger = get_logger(__name__)
 
 
 def add_movie_to_sheet(
@@ -15,7 +21,13 @@ def add_movie_to_sheet(
         imdb_id (str): IMDB ID of movie
         watched (bool, optional): Whether to tick watched checkbox
     """
-    insert_data: dict[str, str] = process_movie_request_imdb_id(imdb_id, watched, True)
+    try:
+        insert_data: dict[str, str] = process_movie_request_imdb_id(
+            imdb_id, watched, True
+        )
+    except MovieRetrievalError:
+        core_logger.error("Error. Exiting...")
+        sys.exit(-1)
     ss.add_values_to_sheet(insert_data)
 
 
@@ -26,7 +38,11 @@ def view_movie_info(imdb_id: str) -> None:
     Args:
         imdb_id: IMDB ID of movie
     """
-    view_data: dict[str, str] = process_movie_request_imdb_id(imdb_id, False, False)
+    try:
+        view_data: dict[str, str] = process_movie_request_imdb_id(imdb_id, False, False)
+    except MovieRetrievalError:
+        core_logger.error("Error. Exiting...")
+        sys.exit(-1)
     print(show_info(view_data))
 
 

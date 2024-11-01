@@ -8,6 +8,7 @@ from tabulate import tabulate
 
 from sheepy.model.movie import Movie
 from sheepy.model.rating import Rating
+from sheepy.util.exceptions import MovieRetrievalError
 from sheepy.util.logger import get_logger
 from sheepy.util.string_util import build_request_url, insert_newlines
 
@@ -45,28 +46,25 @@ def _get_movie_data(imdb_id: str) -> dict[str, Any]:
         response.raise_for_status()
         response_json: dict[str, str] = response.json()
     except requests.exceptions.HTTPError as he:
-        omdb_logger.error("HTTP Error Code: - %s", str(he))
+        omdb_logger.error(f"HTTP Error Code: - {he}")
         raise SystemExit(f"HTTP Error Code: - {str(he)}") from he
     except requests.exceptions.RequestException as re:
-        omdb_logger.error("Request Error: %s", str(re))
+        omdb_logger.error(f"Request Error: {re}")
         raise SystemExit(f"Request Error: {str(re)}") from re
     except Exception as e:
-        omdb_logger.error("General Error: %s", str(e))
+        omdb_logger.error(f"General Error: {e}")
         raise SystemExit(f"General Error: {str(e)}") from e
 
     if response_json["Response"] == "False":
         omdb_logger.error(
-            "%s - Invalid IMDb ID: %s. Please try again.",
-            response_json["Error"],
-            imdb_id,
+            f"{response_json["Error"]} - Invalid IMDb ID: {imdb_id}. Please try again.",
         )
-        omdb_logger.debug("Used ID: %s", imdb_id)
-        raise SystemExit(f"{response_json['Error']} - Invalid IMDb ID.")
+        omdb_logger.debug(f"Used ID: {imdb_id}")
+        raise MovieRetrievalError(f"{response_json['Error']} - Invalid IMDb ID.")
 
     omdb_logger.info(
-        "Successfully retrieved movie data for %s with IMDb-ID %s.",
-        response_json["Title"],
-        response_json["imdbID"],
+        f"Successfully retrieved movie data for {response_json["Title"]}"
+        f"with IMDb-ID {response_json["imdbID"]}."
     )
 
     return response_json
@@ -108,11 +106,11 @@ def _get_movie_data_by_name_and_year(name: str, year: int) -> dict[str, str]:
 
     if response_json["Response"] == "False":
         omdb_logger.error(
-            f"{response_json["Error"]} - Invalid Name and/or Year: {name} ({year})."
+            f"""{response_json["Error"]} - Invalid Movie Name/Year: {name} ({year}).
+             Please try again."""
         )
-        omdb_logger.debug("Used Title: %s (%d)", name, year)
-        raise SystemExit(f"{response_json['Error']} - Invalid IMDb ID.")
-
+        omdb_logger.debug(f"Used Name and Year: {name} ({year})")
+        raise MovieRetrievalError(f"{response_json['Error']} - Invalid IMDb ID.")
     omdb_logger.info(
         "Successfully retrieved movie data for %s with IMDb-ID %s.",
         response_json["Title"],
@@ -200,7 +198,11 @@ def process_movie_request_imdb_id(
     Returns:
         dict: Dictionary containing movie data
     """
-    raw_movie_info: dict[str, str] = _get_movie_data(imdb_id)
+    try:
+        raw_movie_info: dict[str, str] = _get_movie_data(imdb_id)
+    except MovieRetrievalError as mre:
+        mre.add_note(f"Error processing movie request with ID: {imdb_id}")
+        raise
     extr_movie_data: Movie = _extract_movie_data(
         raw_movie_info, watched, add, suggested_by
     )
@@ -227,7 +229,13 @@ def process_movie_request_name_year(
     Returns:
         dict: Dictionary containing movie data
     """
-    raw_movie_info: dict[str, str] = _get_movie_data_by_name_and_year(name, year)
+    try:
+        raw_movie_info: dict[str, str] = _get_movie_data_by_name_and_year(name, year)
+    except MovieRetrievalError as mre:
+        mre.add_note(
+            f"Error processing movie request with name and year: {name} ({year})"
+        )
+        raise
     extr_movie_data: Movie = _extract_movie_data(
         raw_movie_info, watched, add, suggested_by
     )
