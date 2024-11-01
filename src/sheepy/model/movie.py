@@ -44,7 +44,7 @@ class Movie:
           or write movie information
 
         Returns:
-            dict[str, Any]: _description_
+            dict[str, Any]: Returns dictionary containing class attributes
         """
         mov_dict: dict[str, Any] = {}
         attr_list = list(self.__dict__.items())
