@@ -1,5 +1,6 @@
+import operator
 from dataclasses import dataclass
-from typing import Any, Self
+from typing import Self
 
 from sheepy.model.rating import Rating
 from sheepy.util.logger import get_logger
@@ -39,21 +40,20 @@ class Movie:
             and self.director == value.director
         )
 
-    def build_dict(self) -> dict[str, Any]:
+    def build_dict(self) -> dict[str, str]:
         """Build dictionary of class attributes used to display
           or write movie information
 
         Returns:
-            dict[str, Any]: Returns dictionary containing class attributes
+            dict[str, str]: Returns dictionary containing class attributes
         """
-        mov_dict: dict[str, Any] = {}
+        mov_dict: dict[str, str] = {}
+        rating_getter = operator.attrgetter("rating")(self)
         attr_list = list(self.__dict__.items())
         for field in attr_list:
             if field[0] == "rating":
-                imdb = field[1].imdb_rating
-                rotten = field[1].tomatometer
-                mov_dict["imdb_rating"] = imdb
-                mov_dict["tomatometer"] = rotten
+                mov_dict["imdb_rating"] = rating_getter.imdb_rating
+                mov_dict["tomatometer"] = rating_getter.tomatometer
                 continue
             mov_dict[field[0]] = field[1]
         return mov_dict
