@@ -113,3 +113,31 @@ def get_env_spreadsheet() -> SheepySpreadsheet:
         SheepySpreadsheet: Spreadsheet instance
     """
     return SheepySpreadsheet.from_env_file()
+
+
+def _view_and_add_from_clipboard(imdb_id: str):
+    ss: SheepySpreadsheet = SheepySpreadsheet.from_env_file()
+    core_logger.info(f"Found IMDb entry from ID: {imdb_id}")
+    print("Adding to Spreadsheet...")
+    add_movie_to_sheet(ss=ss, imdb_id=imdb_id)
+    print("Done!")
+
+
+def watch_clipboard() -> None:
+    """
+    Watches Clipboard for valid IMDb Ids
+    """
+    watcher: ClipboardWatcher = ClipboardWatcher(
+        check_for_imdb_id, _view_and_add_from_clipboard, 1.0
+    )
+    watcher.start()
+    print("Waiting for clipboard contents...")
+    print("Press Ctrl+C in terminal window to exit.")
+    while True:
+        try:
+            print("...")
+            time.sleep(10)
+        except KeyboardInterrupt:
+            print("Exiting...")
+            watcher.stop()
+            break
