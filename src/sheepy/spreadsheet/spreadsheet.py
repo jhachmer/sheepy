@@ -1,6 +1,5 @@
 """Spreadsheet Module"""
 
-import csv
 import os
 from typing import Any, Self
 
@@ -8,7 +7,6 @@ import gspread
 from gspread.utils import ExportFormat, ValueInputOption, rowcol_to_a1
 from requests import Response
 
-from sheepy import spreadsheet
 from sheepy.omdb.api import show_info
 from sheepy.spreadsheet.sheet_config import SHEET_NTH_ROW
 from sheepy.util.logger import get_logger
@@ -35,7 +33,7 @@ class SheepySpreadsheet:
             worksheet_index (str | None, optional): Worksheet Index. Defaults to None.
 
         Raises:
-            ValueError: if neither spreadsheet_id or worksheet_index was provided
+            AttributeError: if neither spreadsheet_id or worksheet_index was provided
             SystemExit: if unable to create gspread service account
             SystemExit: if spreadsheet was not found
             SystemExit: if worksheet was not found
@@ -55,7 +53,7 @@ class SheepySpreadsheet:
         self.logger = get_logger(__name__)
 
         if (spreadsheet_id is None) != (worksheet_index is None):
-            raise ValueError("Please provide spreadsheet ID and worksheet index")
+            raise AttributeError("Please provide spreadsheet ID and worksheet index")
         elif spreadsheet_id is not None and worksheet_index is not None:
             try:
                 self.spreadsheet_id = spreadsheet_id
@@ -82,7 +80,7 @@ class SheepySpreadsheet:
         """Instantiate SheepySpreadsheet from environment variable config
 
         Raises:
-            ValueError: Raises Exception if environment variables are not set
+            AttributeError: Raises Exception if environment variables are not set
             SystemExit: Raises Exception if spreadsheet could not be found
             SystemExit: Raises Exception if worksheet could not be found
 
@@ -96,7 +94,7 @@ class SheepySpreadsheet:
             if sh.worksheet_index is None or sh.spreadsheet_id is None:
                 sh.logger.debug(sh.spreadsheet_id)
                 sh.logger.debug(sh.worksheet_index)
-                raise ValueError(
+                raise AttributeError(
                     f"One or more necessary values are None:"
                     f" {sh.spreadsheet_id=} | {sh.worksheet_index=}"
                 )
@@ -146,11 +144,11 @@ class SheepySpreadsheet:
             email (str): Email-Address of new owner
 
         Raises:
-            ValueError: Raises Exception if spreadsheet is not set
+            AttributeError: Raises Exception if spreadsheet is not set
             ValueError: Raises Exception if email-address is not found in permissions
         """
         if self.spreadsheet is None:
-            raise ValueError(
+            raise AttributeError(
                 "spreadsheet_id is None. Call set_instance_variables first"
             )
         perms: list = self.spreadsheet.list_permissions()
@@ -191,10 +189,10 @@ class SheepySpreadsheet:
             role (str): Role to be given to new account
 
         Raises:
-            ValueError: raises when spreadsheet is None
+            AttributeError: raises when spreadsheet is None
         """
         if not self.spreadsheet:
-            raise ValueError(
+            raise AttributeError(
                 "Can not select worksheet because there is no spreadsheet selected"
             )
         self.spreadsheet.share(email_address=email, perm_type=account_type, role=role)
@@ -206,16 +204,16 @@ class SheepySpreadsheet:
             index (int | None, optional): Index of worksheet. Defaults to None.
 
         Raises:
-            ValueError: if spreadsheet is not set on object istance
+            AttributeError: if spreadsheet is not set on object istance
             SystemExit: if worksheet could not be found
-            ValueError: if worksheet is still not set
+            AttributeError: if worksheet is still not set
 
         Returns:
             gspread.worksheet.Worksheet: Instance of Worksheet
         """
         self.logger.debug(index)
         if not self.spreadsheet:
-            raise ValueError(
+            raise AttributeError(
                 "Can not select worksheet because there is no spreadsheet selected"
             )
         worksheet: gspread.worksheet.Worksheet | None = None
@@ -227,7 +225,9 @@ class SheepySpreadsheet:
             ) from wnf
         finally:
             if worksheet is None:
-                raise ValueError("Could not find any worksheets with given arguments")
+                raise AttributeError(
+                    "Could not find any worksheets with given arguments"
+                )
         return worksheet
 
     def read_row(self, row_number: int) -> list[Any]:
@@ -236,26 +236,30 @@ class SheepySpreadsheet:
         Args:
             row_number (int): Row Number
 
+        Raises:
+            AttributeError: Raises Error if worksheet is not set
+
+
         Returns:
             list[Any]: Returns list of values present in row
         """
         if self.worksheet is None:
-            raise ValueError("Worksheet of SheepySpreadsheet object is not set.")
+            raise AttributeError("Worksheet of SheepySpreadsheet object is not set.")
         return self.worksheet.row_values(row_number)
 
     def find_free_row(self) -> int:
         """Finds first row not populated with data
 
         Raises:
-            ValueError: Raises Error if worksheet is not set
+            AttributeError: Raises Error if worksheet is not set
 
         Returns:
             int: Returns number of first free row
         """
         if not self.worksheet:
-            raise ValueError("Select a worksheet first")
+            raise AttributeError("Select a worksheet first")
         row_list: list = list(filter(None, self.worksheet.col_values(2)))
-        self.logger.info("First free row: %s", len(row_list) + 1)
+        self.logger.debug("First free row: %s", len(row_list) + 1)
         return len(row_list) + 1
 
     def add_values_to_sheet(self, movie_dict: dict) -> None:
@@ -265,10 +269,10 @@ class SheepySpreadsheet:
             movie_dict (dict): movie dictionary wth movie info
 
         Raises:
-            ValueError: if worksheet is not set
+            AttributeError: if worksheet is not set
         """
         if self.worksheet is None:
-            raise ValueError("Select a worksheet first")
+            raise AttributeError("Select a worksheet first")
         insert_row: int = self.find_free_row()
         a1_notation: str = rowcol_to_a1(insert_row, 1)
         values: list[list[str]] = [list(movie_dict.values())]
