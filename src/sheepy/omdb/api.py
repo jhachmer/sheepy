@@ -12,17 +12,16 @@ from sheepy.util.exceptions import MovieRetrievalError
 from sheepy.util.logger import get_logger
 from sheepy.util.string_util import build_request_url, insert_newlines
 
+omdb_logger = get_logger(__name__)
+
 URL = "http://www.omdbapi.com/?apikey="
 API_KEY = os.environ.get("OMDB_API_KEY", "")
 if API_KEY == "":
     raise SystemExit(f"Error: API_KEY is not set. {API_KEY}")
 SUGGESTED_BY = os.environ.get("SUGGESTED_BY", "Someone")
-SPREADSHEET_ID = os.environ.get("SPREADSHEET_ID", "")
-
-omdb_logger = get_logger(__name__)
 
 
-def _get_movie_data(imdb_id: str) -> dict[str, Any]:
+def _get_movie_data(imdb_id: str) -> dict[str, str]:
     """Get movie data from the Open Movie Database (OMDb) API.
     Uses IMDb-ID for search.
 
