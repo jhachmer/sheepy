@@ -13,14 +13,14 @@ def get_logger(name: str) -> logging.Logger:
     return logging.getLogger(name)
 
 
-def create_log_dir(dir_name: str, log_file_name: str):
+def create_log_dir(dir_name: str, log_file_name: str) -> None:
     if not os.path.exists(dir_name):
         os.mkdir(dir_name)
         if not os.path.exists(os.path.join(dir_name, log_file_name)):
             open(os.path.join(dir_name, log_file_name), "w").close()
 
 
-def setup_logging(dir_name: str = "logs", log_file_name: str = "file.log"):
+def setup_logging(dir_name: str = "logs", log_file_name: str = "file.log") -> None:
     logging.basicConfig(
         level=LOG_LEVEL,
         format=LOG_FORMAT,
