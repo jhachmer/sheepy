@@ -1,8 +1,13 @@
 import sys
+import time
+
+import gspread
 
 from sheepy.omdb.api import process_movie_request_imdb_id, show_info
+from sheepy.parser.clipboard_parser import ClipboardWatcher, check_for_imdb_id
 from sheepy.spreadsheet.spreadsheet import SheepySpreadsheet
 from sheepy.util.exceptions import MovieRetrievalError
+from sheepy.util.file import create_env_file
 from sheepy.util.logger import get_logger
 
 core_logger = get_logger(__name__)
@@ -84,23 +89,7 @@ def create_new_sheet(email: str) -> SheepySpreadsheet:
         f"Created new sheet\nSpreadsheet ID: {ss.spreadsheet_id}\n"
         f"Worksheet Index: {ss.worksheet_index}"
     )
-    ss.logger.info(
-        "Make Sure to fill out remaining fields in .env file."
-        " After filling out rename to '.env'"
-    )
-    with open("new.env", "x") as env_file:
-        env_file.write(
-            "# OMDB API KEY\n"
-            'OMDB_API_KEY="Your_API_Key"\n'
-            "# GOOGLE SHEETS ID\n"
-            "# LONG STRING IN THE URL AFTER /d/ AND BEFORE /edit\n"
-            f'SPREADSHEET_ID="{ss.spreadsheet_id}"\n'
-            "\n"
-            f'WORKSHEET_INDEX="{ss.worksheet_index}"\n'
-            "\n"
-            "# ENTER YOUR NAME HERE :)\n"
-            'SUGGESTED_BY="Your_Name"\n'
-        )
+    create_env_file(ss)
     ss.share_spreadsheet(email, "user", "writer")
     return ss
 

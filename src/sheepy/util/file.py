@@ -27,3 +27,23 @@ def rename_file(new_name: str, orig_file: str = "sheepy.csv") -> None:
     except FileNotFoundError as fnfe:
         logger.info(f"Unable to delete Spreadsheet file\n{fnfe}")
         logger.debug(fnfe)
+
+
+def create_env_file(ss):
+    ss.logger.info(
+        "Make Sure to fill out remaining fields in .env file."
+        " After filling out rename to '.env'"
+    )
+    with open("new.env", "x") as env_file:
+        env_file.write(
+            "# OMDB API KEY\n"
+            'OMDB_API_KEY="Your_API_Key"\n'
+            "# GOOGLE SHEETS ID\n"
+            "# LONG STRING IN THE URL AFTER /d/ AND BEFORE /edit\n"
+            f'SPREADSHEET_ID="{ss.spreadsheet_id}"\n'
+            "\n"
+            f'WORKSHEET_INDEX="{ss.worksheet_index}"\n'
+            "\n"
+            "# ENTER YOUR NAME HERE :)\n"
+            'SUGGESTED_BY="Your_Name"\n'
+        )
