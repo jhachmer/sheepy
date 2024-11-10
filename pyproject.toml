@@ -1,7 +1,5 @@
 [build-system]
-requires = [
-    "flit_core >=3.2,<4",
-]
+requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 
@@ -16,7 +14,8 @@ dependencies = [
     "gspread",
     "gspread-formatting",
     "tabulate",
-    "python-dotenv"
+    "python-dotenv",
+    "pyperclip",
 ]
 
 [project.optional-dependencies]
