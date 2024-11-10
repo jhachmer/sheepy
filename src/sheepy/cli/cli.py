@@ -1,12 +1,13 @@
 import argparse
 import sys
 
-from sheepy.core import (
+from sheepy import (
     add_movie_to_sheet,
     create_new_sheet,
     download_csv,
     get_env_spreadsheet,
     view_movie_info,
+    watch_clipboard,
 )
 from sheepy.spreadsheet.spreadsheet import SheepySpreadsheet
 
@@ -50,6 +51,10 @@ def read_user_cli_args() -> argparse.Namespace:
     add_parser.set_defaults(func=cli_add_movie)
     dl_parser = subparsers.add_parser("dl", help="Download spreadsheet as csv")
     dl_parser.set_defaults(func=cli_download_csv)
+    watch_parser = subparsers.add_parser(
+        "watch", help="Watches clipboard for valid IMDb IDs"
+    )
+    watch_parser.set_defaults(func=cli_watch_clipboard)
 
     return global_parser.parse_args(args=None if sys.argv[1:] else ["--help"])
 
@@ -93,3 +98,12 @@ def cli_download_csv(args: argparse.Namespace) -> None:
     """
     ss: SheepySpreadsheet = get_env_spreadsheet()
     download_csv(ss)
+
+
+def cli_watch_clipboard(args: argparse.Namespace) -> None:
+    """Watches Clipboard for valid IMDb IDs
+
+    Args:
+        args (argparse.Namespace): Arguments parsed from command line
+    """
+    watch_clipboard()
