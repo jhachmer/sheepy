@@ -25,7 +25,7 @@ def check_for_imdb_id(clipboard_content: str) -> bool:
 class ClipboardWatcher(threading.Thread):
     """Implements functionality to watch clipboard for content changes
      Pass function to predicate to determine when the callable arg should be triggered
-     pause determines the time between polling the clipboard
+      pause determines the time between polling the clipboard
 
     Args:
         threading: Inherits from Thread to override run method
@@ -44,7 +44,7 @@ class ClipboardWatcher(threading.Thread):
         self._stopping = False
 
     def run(self) -> None:
-        recent_value: str = ""
+        recent_value: str = pyperclip.paste()
         while not self._stopping:
             tmp_value: str = pyperclip.paste()
             if tmp_value != recent_value:
