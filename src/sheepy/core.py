@@ -1,8 +1,6 @@
 import sys
 import time
 
-import gspread
-
 from sheepy.omdb.api import process_movie_request_imdb_id, show_info
 from sheepy.parser.clipboard_parser import ClipboardWatcher, check_for_imdb_id
 from sheepy.spreadsheet.spreadsheet import SheepySpreadsheet

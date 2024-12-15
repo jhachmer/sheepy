@@ -10,7 +10,7 @@ def main() -> None:
     Main entry for application
     """
     logger: logging.Logger = get_logger(__name__)
-    print("\N{snake}\N{snake} Hello, welcome to Sheepy \N{snake}\N{snake}\n")
+    print("\N{SNAKE}\N{SNAKE} Hello, welcome to Sheepy \N{SNAKE}\N{SNAKE}\n")
     args: argparse.Namespace = read_user_cli_args()
     logger.debug(args)
 
