@@ -16,10 +16,8 @@ def check_for_imdb_id(clipboard_content: str) -> bool:
         bool: Returns true if given string is a valid id
     """
     imdb_id_pattern: re.Pattern = re.compile(r"tt\d{7,8}$", re.IGNORECASE)
-    match = imdb_id_pattern.match(clipboard_content)
-    if match is None:
-        return False
-    return True
+    match: re.Match[str] | None = imdb_id_pattern.match(clipboard_content)
+    return False if match is None else True
 
 
 class ClipboardWatcher(threading.Thread):
