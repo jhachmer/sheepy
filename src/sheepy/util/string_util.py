@@ -1,6 +1,7 @@
 """Utilities to manipulate strings"""
 
 
+# TODO: Detect words and dont add newlines in the middle of them
 def insert_newlines(string: str, nth: int = 64) -> str:
     """inserts newlines at every nth character
 

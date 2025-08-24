@@ -182,13 +182,12 @@ def set_insert_row_height(ss: "SheepySpreadsheet", row: int) -> None:
     if ss.worksheet is None:
         raise ValueError("Worksheet of SheepySpreadsheet object is not set.")
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
-    ws: gspread.Worksheet = ss.worksheet
+    ws: gspread.Worksheet = ss.worksheet  # type: ignore
     # Set height of row
     batch.set_row_height(ws, f"{row}", SHEET_ROW_HEIGHT)  # type: ignore
     batch.execute()
 
 
-# noinspection PyTestUnpassedFixture
 def setup_columns(ss: "SheepySpreadsheet") -> None:
     """
     Sets column widths for columns used for values
@@ -200,7 +199,7 @@ def setup_columns(ss: "SheepySpreadsheet") -> None:
         raise ValueError("Worksheet of SheepySpreadsheet object is not set.")
     batch: SpreadsheetBatchUpdater = SpreadsheetBatchUpdater(ss.spreadsheet)
     cf: CellFormat = CellFormat(wrapStrategy="WRAP", verticalAlignment="MIDDLE")
-    ws: gspread.Worksheet = ss.worksheet
+    ws: gspread.Worksheet = ss.worksheet  # type: ignore
 
     for format_tuple in COLUMN_WIDTHS:
         # col, width = format_tuple
